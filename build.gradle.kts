@@ -4,14 +4,19 @@ plugins {
 }
 
 group = "com.andreikingsley"
-version = "0.1.0"
+version = "0.1.1"
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.1.0")
+    implementation("com.github.AndreiKingsley:ggdsl:0.1.1")
 }
 
 tasks {
@@ -28,7 +33,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.andreikingsley"
             artifactId = "ggdsl-lets-plot"
-            version = "0.1.0"
+            version = "0.1.1"
 
             from(components["java"])
         }
