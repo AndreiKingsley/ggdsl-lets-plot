@@ -27,7 +27,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "com.andreikingsley"
-            artifactId = "ggdsl"
+            artifactId = "ggdsl-lets-plot"
             version = "0.1.0"
 
             from(components["java"])
