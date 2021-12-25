@@ -27,10 +27,10 @@ fun Aes.toLPName(geom: Geom): String {
     if ((geom == Geom.BAR || geom == Geom.POINT) && this == COLOR) {
         return "fill"
     }
-    if (this == BORDER_WIDTH){
+    if (this == BORDER_WIDTH) {
         return "stroke"
     }
-    if (this == BORDER_COLOR){
+    if (this == BORDER_COLOR) {
         return "color"
     }
     if (geom == Geom.LINE && this == WIDTH) {
@@ -47,7 +47,6 @@ fun Geom?.toLPGeom(): jetbrains.letsPlot.intern.layer.GeomOptions {
         else -> TODO()
     }
 }
-
 
 
 fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
@@ -70,14 +69,13 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
         is CategoricalNonPositionalScale<*, *> -> {
             when (aes) {
                 SIZE -> scaleSizeManual(values = values.map { it as Double }) // TODO
-                COLOR -> when (geom) {
-                    Geom.BAR -> if (values.isEmpty()) {
-                        scaleFillDiscrete()
-                    } else scaleFillManual(values = values) // TODO
-                    else -> if (values.isEmpty()) {
-                        scaleColorDiscrete()
-                    } else scaleColorManual(values = values) // TODO
-                } // TODO
+                // TODO
+                COLOR -> if (values.isEmpty()) {
+                    scaleFillDiscrete()
+                } else {
+                    scaleFillManual(values = values)
+                }
+                // TODO
                 ALPHA -> scaleAlphaManual(values = values.map { it as Double }) // TODO
                 else -> TODO()
             }
@@ -85,18 +83,11 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
         is ContinuousNonPositionalScale<*, *> -> {
             when (aes) {
                 SIZE -> scaleSize(limits = domainLimits.toLP(), range = range.toLP()) // TODO
-                COLOR -> when (geom) {
-                    Geom.BAR -> scaleFillContinuous(
-                        low = range?.first.toString(),
-                        high = range?.second.toString(),
-                        limits = domainLimits.toLP()
-                    )
-                    else -> scaleColorContinuous(
-                        low = range?.first.toString(),
-                        high = range?.second.toString(),
-                        limits = domainLimits.toLP()
-                    )
-                }  // TODO
+                COLOR -> scaleColorContinuous(
+                    low = range?.first.toString(),
+                    high = range?.second.toString(),
+                    limits = domainLimits.toLP()
+                )   // TODO
                 ALPHA -> scaleAlpha(limits = domainLimits.toLP(), range = range.toLP()) // TODO
                 else -> TODO()
             }
