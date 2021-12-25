@@ -3,8 +3,10 @@ plugins {
     `maven-publish`
 }
 
+val ggdslVersion = "0.1.2-dev-1.8"
+
 group = "com.andreikingsley"
-version = "0.1.1"
+version = ggdslVersion
 
 repositories {
     mavenCentral()
@@ -16,7 +18,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.1.0")
-    implementation("com.github.AndreiKingsley:ggdsl:0.1.1")
+    implementation("com.github.AndreiKingsley:ggdsl:$ggdslVersion")
 }
 
 tasks {
@@ -33,7 +35,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.andreikingsley"
             artifactId = "ggdsl-lets-plot"
-            version = "0.1.1"
+            version = ggdslVersion
 
             from(components["java"])
         }

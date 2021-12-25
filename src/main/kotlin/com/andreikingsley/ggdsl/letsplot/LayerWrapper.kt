@@ -6,6 +6,7 @@ import com.andreikingsley.ggdsl.ir.scale.*
 import jetbrains.letsPlot.Pos
 import jetbrains.letsPlot.Stat
 import jetbrains.letsPlot.intern.Options
+import jetbrains.letsPlot.label.labs
 import jetbrains.letsPlot.letsPlot
 import jetbrains.letsPlot.scale.*
 
@@ -23,41 +24,52 @@ class LayerWrapper(val layer: Layer) :
 
 // TODO
 fun Aes.toLPName(geom: Geom): String {
-    if (geom == Geom.BAR && name == "color") {
+    if ((geom == Geom.BAR || geom == Geom.POINT) && this == COLOR) {
         return "fill"
+    }
+    if (this == BORDER_WIDTH){
+        return "stroke"
+    }
+    if (this == BORDER_COLOR){
+        return "color"
+    }
+    if (geom == Geom.LINE && this == WIDTH) {
+        return "size"
     }
     return name
 }
 
 fun Geom?.toLPGeom(): jetbrains.letsPlot.intern.layer.GeomOptions {
     return when (this!!) {
-        Geom.POINT -> jetbrains.letsPlot.Geom.point()
+        Geom.POINT -> jetbrains.letsPlot.Geom.point(shape = 21) // TODO!
         Geom.BAR -> jetbrains.letsPlot.Geom.bar()
         Geom.LINE -> jetbrains.letsPlot.Geom.line()
         else -> TODO()
     }
 }
 
-fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale {
+
+
+fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
 
     return when (this) {
         is CategoricalPositionalScale<*> -> {
             when (aes) {
-                X -> scaleXDiscrete(limits = categories)
-                Y -> scaleYDiscrete(limits = categories)
+                X -> scaleXDiscrete(limits = categories, name = axis.name)
+                Y -> scaleYDiscrete(limits = categories, name = axis.name)
                 else -> TODO()
             }
         }
         is ContinuousPositionalScale<*> -> {
             when (aes) {
-                X -> scaleXContinuous(limits = limits.toLP())
-                Y -> scaleYContinuous(limits = limits.toLP())
+                X -> scaleXContinuous(limits = limits.toLP(), name = axis.name)
+                Y -> scaleYContinuous(limits = limits.toLP(), name = axis.name)
                 else -> TODO()
             }
         }
         is CategoricalNonPositionalScale<*, *> -> {
             when (aes) {
-                SIZE -> scaleSizeManual(values = values.map { it as Number }) // TODO
+                SIZE -> scaleSizeManual(values = values.map { it as Double }) // TODO
                 COLOR -> when (geom) {
                     Geom.BAR -> if (values.isEmpty()) {
                         scaleFillDiscrete()
@@ -66,7 +78,7 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale {
                         scaleColorDiscrete()
                     } else scaleColorManual(values = values) // TODO
                 } // TODO
-
+                ALPHA -> scaleAlphaManual(values = values.map { it as Double }) // TODO
                 else -> TODO()
             }
         }
@@ -85,8 +97,12 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale {
                         limits = domainLimits.toLP()
                     )
                 }  // TODO
+                ALPHA -> scaleAlpha(limits = domainLimits.toLP(), range = range.toLP()) // TODO
                 else -> TODO()
             }
+        }
+        is DefaultScale -> {
+            return null
         }
         else -> TODO()
     }
@@ -98,9 +114,9 @@ fun Pair<Any, Any>?.toLP() = this?.let { (it.first as Number) to (it.second as N
 
 fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
     // TODO
-    return layers.fold(letsPlot(dataset)) { plot, layer ->
+    return layers.fold(letsPlot(dataset) + labs(title = layout.title)) { plot, layer ->
         var buffer = plot + LayerWrapper(layer)
-        layer.scales.forEach { (aes, scale) -> buffer += scale.wrap(aes, layer.geom) }
+        layer.scales.forEach { (aes, scale) -> scale.wrap(aes, layer.geom)?.let { buffer += it } }
         buffer
     }
 }
