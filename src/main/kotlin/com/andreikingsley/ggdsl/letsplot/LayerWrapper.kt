@@ -3,6 +3,10 @@ package com.andreikingsley.ggdsl.letsplot
 import com.andreikingsley.ggdsl.ir.*
 import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.ir.scale.*
+import com.andreikingsley.ggdsl.ir.symbol.CIRCLE
+import com.andreikingsley.ggdsl.ir.symbol.RECTANGLE
+import com.andreikingsley.ggdsl.ir.symbol.Symbol
+import com.andreikingsley.ggdsl.ir.symbol.TRIANGLE
 import jetbrains.letsPlot.Pos
 import jetbrains.letsPlot.Stat
 import jetbrains.letsPlot.facet.facetGrid
@@ -12,7 +16,7 @@ import jetbrains.letsPlot.label.labs
 import jetbrains.letsPlot.letsPlot
 import jetbrains.letsPlot.scale.*
 
-class LayerWrapper(val layer: Layer) :
+class LayerWrapper(private val layer: Layer) :
     jetbrains.letsPlot.intern.layer.LayerBase(
         data = layer.data,
         mapping = Options(layer.mappings.map { (aes, id) -> aes.toLPName(layer.geom) to id }.toMap()),
@@ -21,8 +25,24 @@ class LayerWrapper(val layer: Layer) :
         position = Pos.dodge, // TODO
         showLegend = true,
     ) {
-    override fun seal() = Options(layer.settings.map { (aes, id) -> aes.toLPName(layer.geom) to id }.toMap())
+    override fun seal() = Options(layer.settings.map { (aes, value) -> wrapSettings(aes, value, layer.geom) }.toMap())
 }
+
+// TODO
+fun wrapSettings(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
+    if (aes == SYMBOL) {
+        return "shape" to wrapSymbol(value as Symbol)
+    }
+    return aes.toLPName(geom) to value
+}
+
+val symbolToNumber = mapOf(
+    RECTANGLE to 22,
+    CIRCLE to 21,
+    TRIANGLE to 24,
+)
+
+fun wrapSymbol(symbol: Symbol): Int = symbolToNumber[symbol]!!
 
 // TODO
 fun Aes.toLPName(geom: Geom): String {
