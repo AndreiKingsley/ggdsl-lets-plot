@@ -25,7 +25,7 @@ class LayerWrapper(private val layer: Layer) :
         position = Pos.dodge, // TODO
         showLegend = true,
     ) {
-    override fun seal() = Options(layer.settings.map { (aes, value) -> wrapSettings(aes, value, layer.geom).apply { println(this) } }.toMap())
+    override fun seal() = Options(layer.settings.map { (aes, value) -> wrapSettings(aes, value, layer.geom) }.toMap())
 }
 
 // TODO
@@ -150,7 +150,7 @@ fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
         buffer
     }
     for ((featureName, feature) in features) {
-        when(featureName) {
+        when (featureName) {
             FACET_GRID_FEATURE -> {
                 plot += (feature as FacetGridFeature).wrap()
             }
