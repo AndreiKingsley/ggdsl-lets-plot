@@ -20,12 +20,12 @@ class LayerWrapper(private val layer: Layer) :
     jetbrains.letsPlot.intern.layer.LayerBase(
         data = layer.data,
         mapping = Options(layer.mappings.map { (aes, id) -> aes.toLPName(layer.geom) to id }.toMap()),
-        geom = layer.geom.toLPGeom(),
+        geom = layer.geom.toLPGeom(!layer.settings.containsKey(SYMBOL)),
         stat = Stat.identity,
         position = Pos.dodge, // TODO
         showLegend = true,
     ) {
-    override fun seal() = Options(layer.settings.map { (aes, value) -> wrapSettings(aes, value, layer.geom) }.toMap())
+    override fun seal() = Options(layer.settings.map { (aes, value) -> wrapSettings(aes, value, layer.geom).apply { println(this) } }.toMap())
 }
 
 // TODO
@@ -61,9 +61,16 @@ fun Aes.toLPName(geom: Geom): String {
     return name
 }
 
-fun Geom?.toLPGeom(): jetbrains.letsPlot.intern.layer.GeomOptions {
+// TODO rewrite
+fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.layer.GeomOptions {
     return when (this!!) {
-        Geom.POINT -> jetbrains.letsPlot.Geom.point(shape = 21) // TODO!
+        Geom.POINT -> {
+            if (defaultShape) {
+                jetbrains.letsPlot.Geom.point(shape = 21)
+            } else {
+                jetbrains.letsPlot.Geom.point(stroke = 5)
+            }
+        }
         Geom.BAR -> jetbrains.letsPlot.Geom.bar()
         Geom.LINE -> jetbrains.letsPlot.Geom.line()
         else -> TODO()
