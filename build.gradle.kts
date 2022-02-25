@@ -4,7 +4,7 @@ plugins {
 }
 
 val ggdslVersion = "0.1.2-dev-1.8-feature-1.1"
-val ggdslLetsPlotVersion = "0.1.2-dev-1.8-facet"
+val ggdslLetsPlotVersion = "0.1.2-dev-1.8-facet-fix-0.1"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion
