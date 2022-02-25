@@ -3,10 +3,11 @@ plugins {
     `maven-publish`
 }
 
-val ggdslVersion = "0.1.2-dev-1.8"
+val ggdslVersion = "0.1.2-dev-1.8-feature-1.1"
+val ggdslLetsPlotVersion = "0.1.2-dev-1.8-facet"
 
 group = "com.andreikingsley"
-version = ggdslVersion
+version = ggdslLetsPlotVersion
 
 repositories {
     mavenCentral()
@@ -35,7 +36,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.andreikingsley"
             artifactId = "ggdsl-lets-plot"
-            version = ggdslVersion
+            version = ggdslLetsPlotVersion
 
             from(components["java"])
         }

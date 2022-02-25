@@ -5,7 +5,9 @@ import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.ir.scale.*
 import jetbrains.letsPlot.Pos
 import jetbrains.letsPlot.Stat
+import jetbrains.letsPlot.facet.facetGrid
 import jetbrains.letsPlot.intern.Options
+import jetbrains.letsPlot.intern.OptionsMap
 import jetbrains.letsPlot.label.labs
 import jetbrains.letsPlot.letsPlot
 import jetbrains.letsPlot.scale.*
@@ -103,11 +105,29 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
 // TODO
 fun Pair<Any, Any>?.toLP() = this?.let { (it.first as Number) to (it.second as Number) }
 
+fun FacetGridFeature.wrap(): OptionsMap {
+    return facetGrid(
+        x = mappings[FACET_X]?.id,
+        y = mappings[FACET_Y]?.id,
+        xOrder = xOrder.value,
+        yOrder = yOrder.value,
+        xFormat = xFormat,
+        yFormat = yFormat
+    )
+}
+
 fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
-    // TODO
-    return layers.fold(letsPlot(dataset) + labs(title = layout.title)) { plot, layer ->
+    var plot = layers.fold(letsPlot(dataset) + labs(title = layout.title)) { plot, layer ->
         var buffer = plot + LayerWrapper(layer)
         layer.scales.forEach { (aes, scale) -> scale.wrap(aes, layer.geom)?.let { buffer += it } }
         buffer
     }
+    for ((featureName, feature) in features) {
+        when(featureName) {
+            FACET_GRID_FEATURE -> {
+                plot += (feature as FacetGridFeature).wrap()
+            }
+        }
+    }
+    return plot
 }
