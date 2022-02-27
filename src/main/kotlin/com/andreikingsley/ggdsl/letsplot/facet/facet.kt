@@ -1,14 +1,9 @@
-package com.andreikingsley.ggdsl.letsplot
+package com.andreikingsley.ggdsl.letsplot.facet
 
 import com.andreikingsley.ggdsl.dsl.DataSource
 import com.andreikingsley.ggdsl.dsl.PlotContext
-import com.andreikingsley.ggdsl.dsl.PositionalMapping
 import com.andreikingsley.ggdsl.ir.FeatureName
 import com.andreikingsley.ggdsl.ir.PlotFeature
-import com.andreikingsley.ggdsl.ir.aes.Aes
-import com.andreikingsley.ggdsl.ir.aes.PositionalAes
-import com.andreikingsley.ggdsl.ir.scale.DefaultPositionalScale
-import kotlin.reflect.typeOf
 
 class FacetAes(val name: String)
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 val ggdslVersion = "0.1.2-dev-1.8-feature-1.1"
-val ggdslLetsPlotVersion = "0.1.2-dev-1.8-facet-fix-0.3"
+val ggdslLetsPlotVersion = "0.1.2-dev-1.8-boxplot-0.1"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion
@@ -22,8 +22,7 @@ dependencies {
     implementation("com.github.AndreiKingsley:ggdsl:$ggdslVersion")
 
 
-    // https://jmaven.com/maven/org.jetbrains.lets-plot/lets-plot-image-export
-   // implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.2.1")
+       // implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.2.1")
 }
 
 tasks {

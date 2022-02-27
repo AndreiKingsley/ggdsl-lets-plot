@@ -7,6 +7,11 @@ import com.andreikingsley.ggdsl.ir.symbol.CIRCLE
 import com.andreikingsley.ggdsl.ir.symbol.RECTANGLE
 import com.andreikingsley.ggdsl.ir.symbol.Symbol
 import com.andreikingsley.ggdsl.ir.symbol.TRIANGLE
+import com.andreikingsley.ggdsl.letsplot.facet.FACET_GRID_FEATURE
+import com.andreikingsley.ggdsl.letsplot.facet.FACET_X
+import com.andreikingsley.ggdsl.letsplot.facet.FACET_Y
+import com.andreikingsley.ggdsl.letsplot.facet.FacetGridFeature
+import com.andreikingsley.ggdsl.letsplot.layers.BOXPLOT
 import jetbrains.letsPlot.Pos
 import jetbrains.letsPlot.Stat
 import jetbrains.letsPlot.facet.facetGrid
@@ -19,17 +24,17 @@ import jetbrains.letsPlot.scale.*
 class LayerWrapper(private val layer: Layer) :
     jetbrains.letsPlot.intern.layer.LayerBase(
         data = layer.data,
-        mapping = Options(layer.mappings.map { (aes, id) -> aes.toLPName(layer.geom) to id }.toMap()),
+        mapping = Options(layer.mappings.map { (aes, value) -> wrapBinding(aes, value, layer.geom) }.toMap()),
         geom = layer.geom.toLPGeom(!layer.settings.containsKey(SYMBOL)),
         stat = Stat.identity,
         position = Pos.dodge, // TODO
         showLegend = true,
     ) {
-    override fun seal() = Options(layer.settings.map { (aes, value) -> wrapSettings(aes, value, layer.geom) }.toMap())
+    override fun seal() = Options(layer.settings.map { (aes, value) -> wrapBinding(aes, value, layer.geom) }.toMap())
 }
 
 // TODO
-fun wrapSettings(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
+fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
     if (aes == SYMBOL) {
         return "shape" to wrapSymbol(value as Symbol)
     }
@@ -46,10 +51,13 @@ fun wrapSymbol(symbol: Symbol): Int = symbolToNumber[symbol]!!
 
 // TODO
 fun Aes.toLPName(geom: Geom): String {
-    if ((geom == Geom.BAR || geom == Geom.POINT) && this == COLOR) {
+    if ((geom == Geom.BAR || geom == Geom.POINT || geom == BOXPLOT) && this == COLOR) {
         return "fill"
     }
     if (this == BORDER_WIDTH) {
+        if (geom == BOXPLOT) {
+            return "width"
+        }
         return "stroke"
     }
     if (this == BORDER_COLOR) {
@@ -68,11 +76,12 @@ fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.laye
             if (defaultShape) {
                 jetbrains.letsPlot.Geom.point(shape = 21)
             } else {
-                jetbrains.letsPlot.Geom.point(stroke = 5)
+                jetbrains.letsPlot.Geom.point()
             }
         }
         Geom.BAR -> jetbrains.letsPlot.Geom.bar()
         Geom.LINE -> jetbrains.letsPlot.Geom.line()
+        BOXPLOT -> jetbrains.letsPlot.Geom.boxplot()
         else -> TODO()
     }
 }
