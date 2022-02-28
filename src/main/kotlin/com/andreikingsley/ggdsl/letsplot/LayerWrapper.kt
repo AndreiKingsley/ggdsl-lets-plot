@@ -11,6 +11,7 @@ import com.andreikingsley.ggdsl.letsplot.facet.FACET_GRID_FEATURE
 import com.andreikingsley.ggdsl.letsplot.facet.FACET_X
 import com.andreikingsley.ggdsl.letsplot.facet.FACET_Y
 import com.andreikingsley.ggdsl.letsplot.facet.FacetGridFeature
+import com.andreikingsley.ggdsl.letsplot.layers.AREA
 import com.andreikingsley.ggdsl.letsplot.layers.BOXPLOT
 import jetbrains.letsPlot.Pos
 import jetbrains.letsPlot.Stat
@@ -51,12 +52,16 @@ fun wrapSymbol(symbol: Symbol): Int = symbolToNumber[symbol]!!
 
 // TODO
 fun Aes.toLPName(geom: Geom): String {
-    if ((geom == Geom.BAR || geom == Geom.POINT || geom == BOXPLOT) && this == COLOR) {
+    if ((geom == Geom.BAR || geom == Geom.POINT || geom == BOXPLOT || geom == AREA) && this == COLOR) {
         return "fill"
     }
+
     if (this == BORDER_WIDTH) {
         if (geom == BOXPLOT) {
             return "width"
+        }
+        if (geom == AREA) {
+            return "size"
         }
         return "stroke"
     }
@@ -82,6 +87,7 @@ fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.laye
         Geom.BAR -> jetbrains.letsPlot.Geom.bar()
         Geom.LINE -> jetbrains.letsPlot.Geom.line()
         BOXPLOT -> jetbrains.letsPlot.Geom.boxplot()
+        AREA -> jetbrains.letsPlot.Geom.area()
         else -> TODO()
     }
 }
