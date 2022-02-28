@@ -15,5 +15,5 @@ class AreaContext : LayerContext() {
 }
 
 fun PlotContext.area(block: AreaContext.() -> Unit) {
-    layers.add(AreaContext().apply { copyFrom(this@area) }.apply(block).toLayer(BOXPLOT))
+    layers.add(AreaContext().apply { copyFrom(this@area) }.apply(block).toLayer(AREA))
 }
