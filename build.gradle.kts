@@ -22,7 +22,7 @@ dependencies {
     implementation("com.github.AndreiKingsley:ggdsl:$ggdslVersion")
 
 
-       // implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.2.1")
+    //implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.2.1")
 }
 
 tasks {
