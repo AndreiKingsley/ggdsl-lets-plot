@@ -1,10 +1,11 @@
 plugins {
     kotlin("jvm") version "1.6.0"
+    id("org.jetbrains.kotlin.jupyter.api") version "0.11.0-1"
     `maven-publish`
 }
 
-val ggdslVersion = "0.1.2-dev-1.9-fix-0.3"
-val ggdslLetsPlotVersion = "0.1.2-dev-1.9-fix-0.3"
+val ggdslVersion = "0.2.1-dev-0.1"
+val ggdslLetsPlotVersion = "0.2.1-dev-0.1"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion

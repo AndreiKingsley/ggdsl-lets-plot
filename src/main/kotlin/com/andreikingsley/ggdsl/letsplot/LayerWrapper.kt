@@ -3,18 +3,14 @@ package com.andreikingsley.ggdsl.letsplot
 import com.andreikingsley.ggdsl.ir.*
 import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.ir.scale.*
-import com.andreikingsley.ggdsl.ir.symbol.CIRCLE
-import com.andreikingsley.ggdsl.ir.symbol.RECTANGLE
-import com.andreikingsley.ggdsl.ir.symbol.Symbol
-import com.andreikingsley.ggdsl.ir.symbol.TRIANGLE
+import com.andreikingsley.ggdsl.util.color.*
+import com.andreikingsley.ggdsl.util.symbol.*
 import com.andreikingsley.ggdsl.letsplot.facet.FACET_GRID_FEATURE
 import com.andreikingsley.ggdsl.letsplot.facet.FACET_X
 import com.andreikingsley.ggdsl.letsplot.facet.FACET_Y
 import com.andreikingsley.ggdsl.letsplot.facet.FacetGridFeature
 import com.andreikingsley.ggdsl.letsplot.layers.AREA
 import com.andreikingsley.ggdsl.letsplot.layers.BOXPLOT
-import com.andreikingsley.ggdsl.util.Color
-import com.andreikingsley.ggdsl.util.StandardColor
 import jetbrains.letsPlot.Pos
 import jetbrains.letsPlot.Stat
 import jetbrains.letsPlot.facet.facetGrid
@@ -53,9 +49,9 @@ fun wrapValue(value: Any): Any{
 }
 
 val symbolToNumber = mapOf(
-    RECTANGLE to 22,
-    CIRCLE to 21,
-    TRIANGLE to 24,
+    Symbol.RECTANGLE to 22,
+    Symbol.CIRCLE to 21,
+    Symbol.TRIANGLE to 24,
 )
 
 fun wrapSymbol(symbol: Symbol): Int = symbolToNumber[symbol]!!
@@ -127,7 +123,7 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                 COLOR -> if (values.isEmpty()) {
                     scaleFillDiscrete()
                 } else {
-                    scaleFillManual(values = values)
+                    scaleFillManual(values = values.map { (it as StandardColor).description })
                 }
                 // TODO
                 ALPHA -> scaleAlphaManual(values = values.map { it as Double }) // TODO
@@ -137,11 +133,16 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
         is ContinuousNonPositionalScale<*, *> -> {
             when (aes) {
                 SIZE -> scaleSize(limits = domainLimits.toLP(), range = range.toLP()) // TODO
-                COLOR -> scaleColorContinuous(
-                    low = range?.first.toString(),
-                    high = range?.second.toString(),
-                    limits = domainLimits.toLP()
-                )   // TODO
+                COLOR -> {
+                    val (lowColor, highColor) = range.let {
+                        it?.first as? StandardColor to it?.second as? StandardColor
+                    }
+                    scaleColorContinuous(
+                        low = lowColor?.description,
+                        high = highColor?.description,
+                        limits = domainLimits.toLP() // todo datetime here
+                    )
+                }   // TODO
                 ALPHA -> scaleAlpha(limits = domainLimits.toLP(), range = range.toLP()) // TODO
                 else -> TODO()
             }
