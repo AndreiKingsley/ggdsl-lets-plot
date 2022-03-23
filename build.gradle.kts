@@ -3,8 +3,8 @@ plugins {
     `maven-publish`
 }
 
-val ggdslVersion = "0.1.2-dev-1.8-feature-1.1"
-val ggdslLetsPlotVersion = "0.1.2-dev-1.8-area-0.2"
+val ggdslVersion = "0.1.2-dev-1.9-fix-0.3"
+val ggdslLetsPlotVersion = "0.1.2-dev-1.9-fix-0.3"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion
@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.1.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.1.1")
     implementation("com.github.AndreiKingsley:ggdsl:$ggdslVersion")
 
 

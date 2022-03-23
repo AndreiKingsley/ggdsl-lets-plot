@@ -13,6 +13,8 @@ import com.andreikingsley.ggdsl.letsplot.facet.FACET_Y
 import com.andreikingsley.ggdsl.letsplot.facet.FacetGridFeature
 import com.andreikingsley.ggdsl.letsplot.layers.AREA
 import com.andreikingsley.ggdsl.letsplot.layers.BOXPLOT
+import com.andreikingsley.ggdsl.util.Color
+import com.andreikingsley.ggdsl.util.StandardColor
 import jetbrains.letsPlot.Pos
 import jetbrains.letsPlot.Stat
 import jetbrains.letsPlot.facet.facetGrid
@@ -39,7 +41,15 @@ fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
     if (aes == SYMBOL) {
         return "shape" to wrapSymbol(value as Symbol)
     }
-    return aes.toLPName(geom) to value
+    return aes.toLPName(geom) to wrapValue(value)
+}
+
+// TODO
+fun wrapValue(value: Any): Any{
+    if (value is StandardColor) {
+        return value.description
+    }
+    return value
 }
 
 val symbolToNumber = mapOf(
