@@ -10,7 +10,7 @@ internal class Integration : JupyterIntegration() {
         import("com.andreikingsley.ggdsl.letsplot.*")
         import("com.andreikingsley.ggdsl.letsplot.facet.*")
         import("com.andreikingsley.ggdsl.letsplot.layers.*")
-        // todo scales
+        // todo add scales
         import("com.andreikingsley.ggdsl.util.symbol.*")
     }
 

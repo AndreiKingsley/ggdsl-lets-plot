@@ -11,7 +11,7 @@ class ScaleGradient<DomainType>(val domainType: KType) : CustomScale{
     var range: Pair<StandardColor, StandardColor>? = null
 }
 
-// TODO add BaseContext
+// TODO add BaseContext context
 inline infix fun <reified DomainType> NonPositionalMapping<DomainType, StandardColor>.scaleGradient(
     block: ScaleGradient<DomainType>.() -> Unit
 ): ScaleGradient<DomainType>{

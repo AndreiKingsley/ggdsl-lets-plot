@@ -5,15 +5,14 @@ import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.ir.scale.*
 import com.andreikingsley.ggdsl.util.color.*
 import com.andreikingsley.ggdsl.util.symbol.*
-import com.andreikingsley.ggdsl.letsplot.facet.FACET_GRID_FEATURE
-import com.andreikingsley.ggdsl.letsplot.facet.FACET_X
-import com.andreikingsley.ggdsl.letsplot.facet.FACET_Y
-import com.andreikingsley.ggdsl.letsplot.facet.FacetGridFeature
-import com.andreikingsley.ggdsl.letsplot.layers.AREA
-import com.andreikingsley.ggdsl.letsplot.layers.BOXPLOT
+import com.andreikingsley.ggdsl.letsplot.facet.*
+import com.andreikingsley.ggdsl.letsplot.layers.*
+import com.andreikingsley.ggdsl.util.linetype.CommonLineType
+import com.andreikingsley.ggdsl.util.linetype.LineType
 import jetbrains.letsPlot.Pos
 import jetbrains.letsPlot.Stat
 import jetbrains.letsPlot.facet.facetGrid
+import jetbrains.letsPlot.ggsize
 import jetbrains.letsPlot.intern.Options
 import jetbrains.letsPlot.intern.OptionsMap
 import jetbrains.letsPlot.label.labs
@@ -43,6 +42,9 @@ fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
 // TODO
 fun wrapValue(value: Any): Any{
     if (value is StandardColor) {
+        return value.description
+    }
+    if (value is CommonLineType) {
         return value.description
     }
     return value
@@ -182,5 +184,7 @@ fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
             }
         }
     }
-    return plot
+    return plot + with(layout.size) {
+        ggsize(first, second)
+    }
 }

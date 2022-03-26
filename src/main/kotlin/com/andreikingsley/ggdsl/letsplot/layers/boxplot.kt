@@ -11,7 +11,6 @@ val BOXPLOT = Geom("boxplot")
 
 class BoxplotContext : LayerContext() {
 
-    // TODO
     val lower = MappableNonPositionalAes<String>("lower")
     val upper = MappableNonPositionalAes<String>("upper")
     val middle = MappableNonPositionalAes<String>("middle")
