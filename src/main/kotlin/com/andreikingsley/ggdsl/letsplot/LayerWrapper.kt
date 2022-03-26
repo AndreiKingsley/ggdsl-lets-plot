@@ -60,6 +60,9 @@ fun wrapSymbol(symbol: Symbol): Int = symbolToNumber[symbol]!!
 
 // TODO
 fun Aes.toLPName(geom: Geom): String {
+    if (this == LINE_TYPE){
+        return "linetype"
+    }
     if ((geom == Geom.BAR || geom == Geom.POINT || geom == BOXPLOT || geom == AREA) && this == COLOR) {
         return "fill"
     }
