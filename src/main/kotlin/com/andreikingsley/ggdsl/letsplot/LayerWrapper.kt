@@ -34,7 +34,7 @@ class LayerWrapper(private val layer: Layer) :
 // TODO
 fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
     if (aes == SYMBOL) {
-        return "shape" to wrapSymbol(value as Symbol)
+        return "shape" to wrapValue(value)
     }
     return aes.toLPName(geom) to wrapValue(value)
 }
@@ -43,6 +43,9 @@ fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
 fun wrapValue(value: Any): Any{
     if (value is StandardColor) {
         return value.description
+    }
+    if (value is CommonSymbol) {
+        return wrapSymbol(value)
     }
     if (value is CommonLineType) {
         return value.description
@@ -169,8 +172,10 @@ fun FacetGridFeature.wrap(): OptionsMap {
         y = mappings[FACET_Y]?.id,
         xOrder = xOrder.value,
         yOrder = yOrder.value,
+        /* TODO
         xFormat = xFormat,
         yFormat = yFormat
+         */
     )
 }
 

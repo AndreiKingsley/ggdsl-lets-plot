@@ -24,9 +24,11 @@ class FacetGridFeature : PlotFeature {
 
     var xOrder: OrderDirection = OrderDirection.ASCENDING
     var yOrder: OrderDirection = OrderDirection.ASCENDING
-
+    /* TODO
     val xFormat: String? = null
     val yFormat: String? = null
+
+     */
 
     inline infix fun <reified DomainType : Any> FacetAes.mapTo(dataSource: DataSource<DomainType>) {
         mappings[this] = dataSource
