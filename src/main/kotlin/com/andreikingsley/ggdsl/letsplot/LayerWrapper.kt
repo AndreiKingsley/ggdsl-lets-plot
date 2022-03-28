@@ -21,7 +21,7 @@ import jetbrains.letsPlot.scale.*
 
 class LayerWrapper(private val layer: Layer) :
     jetbrains.letsPlot.intern.layer.LayerBase(
-        data = layer.data,
+        data = null,
         mapping = Options(layer.mappings.map { (aes, value) -> wrapBinding(aes, value, layer.geom) }.toMap()),
         geom = layer.geom.toLPGeom(!layer.settings.containsKey(SYMBOL)),
         stat = Stat.identity,
@@ -34,7 +34,7 @@ class LayerWrapper(private val layer: Layer) :
 // TODO
 fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
     if (aes == SYMBOL) {
-        return "shape" to wrapValue(value)
+        return "shape" to wrapValue(value) // TODO scaling
     }
     return aes.toLPName(geom) to wrapValue(value)
 }
@@ -108,7 +108,7 @@ fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.laye
 
 
 fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
-
+    // TODO depends on geom
     return when (this) {
         is CategoricalPositionalScale<*> -> {
             when (aes) {
