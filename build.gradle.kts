@@ -5,7 +5,7 @@ plugins {
 }
 
 val ggdslVersion = "0.2.1-dev-0.2"
-val ggdslLetsPlotVersion = "0.2.1-dev-0.3"
+val ggdslLetsPlotVersion = "0.2.1-dev-0.3-fix-1"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion
