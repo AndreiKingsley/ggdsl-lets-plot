@@ -21,8 +21,10 @@ import jetbrains.letsPlot.scale.*
 class LayerWrapper(private val layer: Layer) :
     jetbrains.letsPlot.intern.layer.LayerBase(
         data = null,
-        mapping = Options(layer.mappings.map { (aes, value) -> wrapBinding(aes, value, layer.geom) }.toMap()),
-        geom = layer.geom.toLPGeom(!layer.settings.containsKey(SYMBOL)),
+        mapping = Options(layer.mappings.map { (aes, value) ->
+            wrapBinding(aes, value, layer.geom) }.toMap()
+        ),
+        geom = layer.geom.toLPGeom(!layer.settings.containsKey(SYMBOL) || !layer.mappings.containsKey(SYMBOL)),
         stat = Stat.identity,
         position = layer.features[POSITION_FEATURE_NAME]?.toPos() ?: Pos.dodge, // TODO
         showLegend = true,
@@ -45,7 +47,9 @@ private fun LayerFeature?.toPos(): PosOptions? {
 // TODO
 fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
     if (aes == SYMBOL) {
-        return "shape" to wrapValue(value) // TODO scaling
+        val ret = "shape" to wrapValue(value) // TODO scaling
+       // TODO
+        return ret
     }
     return aes.toLPName(geom) to wrapValue(value)
 }
