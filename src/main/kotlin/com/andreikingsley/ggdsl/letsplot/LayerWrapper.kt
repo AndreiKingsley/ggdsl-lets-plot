@@ -1,22 +1,21 @@
 package com.andreikingsley.ggdsl.letsplot
 
 import com.andreikingsley.ggdsl.ir.*
+import com.andreikingsley.ggdsl.ir.Geom
 import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.ir.scale.*
 import com.andreikingsley.ggdsl.util.color.*
 import com.andreikingsley.ggdsl.util.symbol.*
 import com.andreikingsley.ggdsl.letsplot.facet.*
 import com.andreikingsley.ggdsl.letsplot.layers.*
+import com.andreikingsley.ggdsl.letsplot.position.*
 import com.andreikingsley.ggdsl.util.linetype.CommonLineType
-import com.andreikingsley.ggdsl.util.linetype.LineType
-import jetbrains.letsPlot.Pos
-import jetbrains.letsPlot.Stat
+import jetbrains.letsPlot.*
 import jetbrains.letsPlot.facet.facetGrid
-import jetbrains.letsPlot.ggsize
 import jetbrains.letsPlot.intern.Options
 import jetbrains.letsPlot.intern.OptionsMap
+import jetbrains.letsPlot.intern.layer.PosOptions
 import jetbrains.letsPlot.label.labs
-import jetbrains.letsPlot.letsPlot
 import jetbrains.letsPlot.scale.*
 
 class LayerWrapper(private val layer: Layer) :
@@ -25,10 +24,22 @@ class LayerWrapper(private val layer: Layer) :
         mapping = Options(layer.mappings.map { (aes, value) -> wrapBinding(aes, value, layer.geom) }.toMap()),
         geom = layer.geom.toLPGeom(!layer.settings.containsKey(SYMBOL)),
         stat = Stat.identity,
-        position = Pos.dodge, // TODO
+        position = layer.features[POSITION_FEATURE_NAME]?.toPos() ?: Pos.dodge, // TODO
         showLegend = true,
     ) {
     override fun seal() = Options(layer.settings.map { (aes, value) -> wrapBinding(aes, value, layer.geom) }.toMap())
+}
+
+private fun LayerFeature?.toPos(): PosOptions? {
+    return when(this) {
+        is Position.Identity -> return Pos.identity
+        is Position.Stack -> return Pos.stack
+        is Position.Dodge -> return positionDodge(width)
+        is Position.Jitter -> return positionJitter(width, height)
+        is Position.Nudge -> return positionNudge(x, y)
+        is Position.JitterDodge -> positionJitterDodge(dodgeWidth, jitterWidth, jitterHeight)
+        else -> null
+    }
 }
 
 // TODO
