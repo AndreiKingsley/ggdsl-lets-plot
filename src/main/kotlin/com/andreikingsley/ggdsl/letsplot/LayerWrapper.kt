@@ -24,7 +24,7 @@ class LayerWrapper(private val layer: Layer) :
         mapping = Options(layer.mappings.map { (aes, value) ->
             wrapBinding(aes, value, layer.geom) }.toMap()
         ),
-        geom = layer.geom.toLPGeom(!layer.settings.containsKey(SYMBOL) || !layer.mappings.containsKey(SYMBOL)),
+        geom = layer.geom.toLPGeom(!(layer.settings.containsKey(SYMBOL) || layer.mappings.containsKey(SYMBOL))),
         stat = Stat.identity,
         position = layer.features[POSITION_FEATURE_NAME]?.toPos() ?: Pos.dodge, // TODO
         showLegend = true,
