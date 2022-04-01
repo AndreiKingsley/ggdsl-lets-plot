@@ -117,6 +117,7 @@ fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.laye
         Geom.LINE -> jetbrains.letsPlot.Geom.path()
         BOXPLOT -> jetbrains.letsPlot.Geom.boxplot()
         AREA -> jetbrains.letsPlot.Geom.area()
+        ERROR_BAR -> jetbrains.letsPlot.Geom.errorbar()
         else -> TODO()
     }
 }
