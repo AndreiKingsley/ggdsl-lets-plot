@@ -26,7 +26,7 @@ class LayerWrapper(private val layer: Layer) :
         ),
         geom = layer.geom.toLPGeom(!(layer.settings.containsKey(SYMBOL) || layer.mappings.containsKey(SYMBOL))),
         stat = Stat.identity,
-        position = layer.features[POSITION_FEATURE_NAME]?.toPos() ?: Pos.dodge, // TODO
+        position = layer.features[POSITION_FEATURE_NAME]?.toPos() ?: Pos.identity, // TODO
         showLegend = true,
     ) {
     override fun seal() = Options(layer.settings.map { (aes, value) -> wrapBinding(aes, value, layer.geom) }.toMap())
