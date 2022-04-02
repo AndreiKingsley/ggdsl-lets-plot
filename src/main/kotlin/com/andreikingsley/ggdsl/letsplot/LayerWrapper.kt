@@ -151,6 +151,7 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                 }
                 // TODO
                 ALPHA -> scaleAlphaManual(values = values.map { it as Double }) // TODO
+                SYMBOL -> scaleShapeManual(values = values.map { wrapSymbol(it as Symbol) })
                 else -> TODO()
             }
         }
@@ -168,6 +169,7 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                     )
                 }   // TODO
                 ALPHA -> scaleAlpha(limits = domainLimits.toLP(), range = range.toLP()) // TODO
+                SYMBOL -> TODO("cant apply contunuous scale")
                 else -> TODO()
             }
         }
