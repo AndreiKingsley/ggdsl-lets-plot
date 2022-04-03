@@ -33,5 +33,5 @@ class CrossBarContext(): LayerContext(){
 }
 
 fun PlotContext.crossbar(block: CrossBarContext.() -> Unit) {
-    layers.add(CrossBarContext().apply { copyFrom(this@crossbar) }.apply(block).toLayer(ERRORBAR))
+    layers.add(CrossBarContext().apply { copyFrom(this@crossbar) }.apply(block).toLayer(CROSSBAR))
 }
