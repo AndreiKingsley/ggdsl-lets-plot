@@ -6,6 +6,7 @@ import com.andreikingsley.ggdsl.dsl.toLayer
 import com.andreikingsley.ggdsl.ir.Geom
 import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.letsplot.FATTEN
+import com.andreikingsley.ggdsl.letsplot.MAPPABLE_BORDER_COLOR
 import com.andreikingsley.ggdsl.letsplot.Y_MAX
 import com.andreikingsley.ggdsl.letsplot.Y_MIN
 
@@ -23,7 +24,7 @@ class PointRangeContext(): LayerContext(){
     val fatten = FATTEN
 
     // todo
-    val lineColor = BORDER_COLOR
+    val lineColor = MAPPABLE_BORDER_COLOR
     val width = WIDTH
     val lineType = LINE_TYPE
 }
