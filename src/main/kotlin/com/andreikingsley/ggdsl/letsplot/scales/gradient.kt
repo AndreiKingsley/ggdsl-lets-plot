@@ -3,6 +3,7 @@ package com.andreikingsley.ggdsl.letsplot.scales
 import com.andreikingsley.ggdsl.dsl.NonPositionalMapping
 import com.andreikingsley.ggdsl.ir.scale.*
 import com.andreikingsley.ggdsl.util.color.*
+import jetbrains.letsPlot.scale.scaleColorGradient
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 

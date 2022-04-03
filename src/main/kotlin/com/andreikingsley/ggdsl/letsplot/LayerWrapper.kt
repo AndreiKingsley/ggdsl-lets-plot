@@ -81,7 +81,7 @@ fun Aes.toLPName(geom: Geom): String {
     if (this == LINE_TYPE){
         return "linetype"
     }
-    if ((geom == Geom.BAR || geom == Geom.POINT || geom == BOXPLOT || geom == AREA) && this == COLOR) {
+    if ((geom == Geom.BAR || geom == Geom.POINT || geom == BOXPLOT || geom == AREA || geom == CROSSBAR) && this == COLOR) {
         return "fill"
     }
 
@@ -89,7 +89,7 @@ fun Aes.toLPName(geom: Geom): String {
         if (geom == BOXPLOT) {
             return "width"
         }
-        if (geom == AREA) {
+        if (geom == AREA || geom == CROSSBAR) {
             return "size"
         }
         return "stroke"
@@ -117,7 +117,8 @@ fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.laye
         Geom.LINE -> jetbrains.letsPlot.Geom.path()
         BOXPLOT -> jetbrains.letsPlot.Geom.boxplot()
         AREA -> jetbrains.letsPlot.Geom.area()
-        ERROR_BAR -> jetbrains.letsPlot.Geom.errorbar()
+        ERRORBAR -> jetbrains.letsPlot.Geom.errorbar()
+        CROSSBAR -> jetbrains.letsPlot.Geom.crossbar()
         else -> TODO()
     }
 }

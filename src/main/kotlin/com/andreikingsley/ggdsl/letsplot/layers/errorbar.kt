@@ -8,9 +8,9 @@ import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.letsplot.Y_MAX
 import com.andreikingsley.ggdsl.letsplot.Y_MIN
 
-val ERROR_BAR = Geom("errorbar")
+val ERRORBAR = Geom("errorbar")
 
-class ErrorBarContext(): LayerContext(){
+class ErrorbarContext(): LayerContext(){
     val yMin = Y_MIN
     val yMax = Y_MAX
 
@@ -22,6 +22,7 @@ class ErrorBarContext(): LayerContext(){
     val lineType = LINE_TYPE
 }
 
-fun PlotContext.errorBar(block: ErrorBarContext.() -> Unit) {
-    layers.add(ErrorBarContext().apply { copyFrom(this@errorBar) }.apply(block).toLayer(ERROR_BAR))
+// todo camelcase???
+fun PlotContext.errorBar(block: ErrorbarContext.() -> Unit) {
+    layers.add(ErrorbarContext().apply { copyFrom(this@errorBar) }.apply(block).toLayer(ERRORBAR))
 }
