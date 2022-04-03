@@ -76,12 +76,19 @@ val symbolToNumber = mapOf(
 
 fun wrapSymbol(symbol: Symbol): Int = symbolToNumber[symbol]!!
 
+val fillGeoms = setOf(
+    Geom.BAR,
+    Geom.POINT,
+    BOXPLOT,
+    AREA,
+    CROSSBAR
+)
 // TODO
 fun Aes.toLPName(geom: Geom): String {
     if (this == LINE_TYPE){
         return "linetype"
     }
-    if ((geom == Geom.BAR || geom == Geom.POINT || geom == BOXPLOT || geom == AREA || geom == CROSSBAR) && this == COLOR) {
+    if (geom in fillGeoms && this == COLOR) {
         return "fill"
     }
 
@@ -161,13 +168,22 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                 SIZE -> scaleSize(limits = domainLimits.toLP(), range = range.toLP()) // TODO
                 COLOR -> {
                     val (lowColor, highColor) = range.let {
-                        it?.first as? StandardColor to it?.second as? StandardColor
+                        (it?.first as? StandardColor)?.description to (it?.second as? StandardColor)?.description
                     }
-                    scaleColorContinuous(
-                        low = lowColor?.description,
-                        high = highColor?.description,
-                        limits = domainLimits.toLP() // todo datetime here
-                    )
+                    val limits = domainLimits.toLP() // todo datetime here
+                    if (geom in fillGeoms){
+                        scaleFillContinuous(
+                            low = lowColor,
+                            high = highColor,
+                            limits = limits
+                        )
+                    } else {
+                        scaleColorContinuous(
+                            low = lowColor,
+                            high = highColor,
+                            limits = limits
+                        )
+                    }
                 }   // TODO
                 ALPHA -> scaleAlpha(limits = domainLimits.toLP(), range = range.toLP()) // TODO
                 SYMBOL -> TODO("cant apply contunuous scale")
