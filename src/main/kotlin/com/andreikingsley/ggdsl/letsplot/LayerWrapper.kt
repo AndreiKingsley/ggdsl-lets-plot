@@ -9,6 +9,7 @@ import com.andreikingsley.ggdsl.util.symbol.*
 import com.andreikingsley.ggdsl.letsplot.facet.*
 import com.andreikingsley.ggdsl.letsplot.layers.*
 import com.andreikingsley.ggdsl.letsplot.position.*
+import com.andreikingsley.ggdsl.letsplot.util.linetype.LetsPlotLineType
 import com.andreikingsley.ggdsl.letsplot.util.symbol.LetsPlotSymbol
 import com.andreikingsley.ggdsl.util.linetype.CommonLineType
 import jetbrains.letsPlot.*
@@ -63,7 +64,13 @@ fun wrapValue(value: Any): Any{
     if (value is CommonSymbol) {
         return wrapSymbol(value)
     }
+    if (value is LetsPlotSymbol) {
+        return value.shape
+    }
     if (value is CommonLineType) {
+        return value.description
+    }
+    if (value is LetsPlotLineType) {
         return value.description
     }
     return value
