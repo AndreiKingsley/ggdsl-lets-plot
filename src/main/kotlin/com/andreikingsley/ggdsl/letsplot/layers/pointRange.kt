@@ -16,7 +16,7 @@ class PointRangeContext(): LayerContext(){
     val yMin = Y_MIN
     val yMax = Y_MAX
 
-    // TODO
+    // TODO pointSize
     val size = SIZE
     val pointColor = COLOR
     val alpha = ALPHA
