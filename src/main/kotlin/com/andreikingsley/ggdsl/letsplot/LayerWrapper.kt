@@ -9,6 +9,7 @@ import com.andreikingsley.ggdsl.util.symbol.*
 import com.andreikingsley.ggdsl.letsplot.facet.*
 import com.andreikingsley.ggdsl.letsplot.layers.*
 import com.andreikingsley.ggdsl.letsplot.position.*
+import com.andreikingsley.ggdsl.letsplot.util.symbol.LetsPlotSymbol
 import com.andreikingsley.ggdsl.util.linetype.CommonLineType
 import jetbrains.letsPlot.*
 import jetbrains.letsPlot.facet.facetGrid
@@ -68,20 +69,31 @@ fun wrapValue(value: Any): Any{
     return value
 }
 
-val symbolToNumber = mapOf(
-    Symbol.RECTANGLE to 22,
-    Symbol.CIRCLE to 21,
-    Symbol.TRIANGLE to 24,
-)
+fun commonSymbolToShape(symbol: CommonSymbol): Int {
+    return when(symbol){
+        Symbol.RECTANGLE -> 22
+        Symbol.CIRCLE -> 21
+        Symbol.TRIANGLE -> 24
+        else -> TODO()
+    }
+}
 
-fun wrapSymbol(symbol: Symbol): Int = symbolToNumber[symbol]!!
+fun wrapSymbol(symbol: Symbol): Int {
+    return when(symbol){
+        is LetsPlotSymbol -> symbol.shape
+        is CommonSymbol -> commonSymbolToShape(symbol)
+        else -> TODO()
+    }
+}
 
 val fillGeoms = setOf(
     Geom.BAR,
     Geom.POINT,
     BOXPLOT,
     AREA,
-    CROSSBAR
+    CROSSBAR,
+    // TODO
+    POINT_RANGE,
 )
 // TODO
 fun Aes.toLPName(geom: Geom): String {
@@ -126,6 +138,8 @@ fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.laye
         AREA -> jetbrains.letsPlot.Geom.area()
         ERRORBAR -> jetbrains.letsPlot.Geom.errorbar()
         CROSSBAR -> jetbrains.letsPlot.Geom.crossbar()
+        LINE_RANGE-> jetbrains.letsPlot.Geom.linerange()
+        POINT_RANGE -> jetbrains.letsPlot.Geom.pointrange()
         else -> TODO()
     }
 }
