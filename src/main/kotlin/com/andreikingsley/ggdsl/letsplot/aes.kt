@@ -10,3 +10,5 @@ val MIDDLE = MappableNonPositionalAes<Double>("middle")
 val Y_MIN = MappableNonPositionalAes<Double>("ymin")
 val Y_MAX = MappableNonPositionalAes<Double>("ymax")
 val FATTEN = NonPositionalAes<Double>("fatten")
+
+val MAPPABLE_BORDER_COLOR = MappableNonPositionalAes<Double>("border_color")

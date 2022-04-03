@@ -113,7 +113,7 @@ fun Aes.toLPName(geom: Geom): String {
         }
         return "stroke"
     }
-    if (this == BORDER_COLOR) {
+    if (this == BORDER_COLOR || this == MAPPABLE_BORDER_COLOR) {
         return "color"
     }
     if (geom == Geom.LINE && this == WIDTH) {
@@ -180,12 +180,12 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
         is ContinuousNonPositionalScale<*, *> -> {
             when (aes) {
                 SIZE -> scaleSize(limits = domainLimits.toLP(), range = range.toLP()) // TODO
-                COLOR -> {
+                COLOR, MAPPABLE_BORDER_COLOR -> {
                     val (lowColor, highColor) = range.let {
                         (it?.first as? StandardColor)?.description to (it?.second as? StandardColor)?.description
                     }
                     val limits = domainLimits.toLP() // todo datetime here
-                    if (geom in fillGeoms){
+                    if (aes == COLOR && geom in fillGeoms){
                         scaleFillContinuous(
                             low = lowColor,
                             high = highColor,
