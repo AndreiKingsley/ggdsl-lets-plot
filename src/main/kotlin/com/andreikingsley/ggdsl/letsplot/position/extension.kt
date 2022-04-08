@@ -1,6 +1,7 @@
 package com.andreikingsley.ggdsl.letsplot.position
 
 import com.andreikingsley.ggdsl.dsl.LayerContext
+
 // todo add backing property?
 var LayerContext.position: Position
     get() = Position.Identity()

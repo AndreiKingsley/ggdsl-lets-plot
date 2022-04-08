@@ -3,6 +3,10 @@ package com.andreikingsley.ggdsl.letsplot
 import com.andreikingsley.ggdsl.ir.*
 import com.andreikingsley.ggdsl.ir.Geom
 import com.andreikingsley.ggdsl.ir.aes.*
+import com.andreikingsley.ggdsl.ir.bindings.Mapping
+import com.andreikingsley.ggdsl.ir.bindings.NonPositionalSetting
+import com.andreikingsley.ggdsl.ir.bindings.ScalablePositionalMapping
+import com.andreikingsley.ggdsl.ir.bindings.Setting
 import com.andreikingsley.ggdsl.ir.scale.*
 import com.andreikingsley.ggdsl.util.color.*
 import com.andreikingsley.ggdsl.util.symbol.*
@@ -23,15 +27,23 @@ import jetbrains.letsPlot.scale.*
 class LayerWrapper(private val layer: Layer) :
     jetbrains.letsPlot.intern.layer.LayerBase(
         data = null,
-        mapping = Options(layer.mappings.map { (aes, value) ->
+        mapping = Options(layer.mappings.map { (_, mapping) -> mapping.wrap(layer.geom) }.toMap()),
+        /*map { (aes, value) ->
             wrapBinding(aes, value, layer.geom) }.toMap()
-        ),
+        )
+        ,
+         */
         geom = layer.geom.toLPGeom(!(layer.settings.containsKey(SYMBOL) || layer.mappings.containsKey(SYMBOL))),
         stat = Stat.identity,
         position = layer.features[POSITION_FEATURE_NAME]?.toPos() ?: Pos.identity, // TODO
         showLegend = true,
     ) {
-    override fun seal() = Options(layer.settings.map { (aes, value) -> wrapBinding(aes, value, layer.geom) }.toMap())
+    // TODO
+    override fun seal() = Options(
+        layer.settings.map {
+                (_, setting) -> (setting as NonPositionalSetting<*>).wrap(layer.geom)
+        }.toMap()
+    )
 }
 
 private fun LayerFeature?.toPos(): PosOptions? {
@@ -44,6 +56,14 @@ private fun LayerFeature?.toPos(): PosOptions? {
         is Position.JitterDodge -> positionJitterDodge(dodgeWidth, jitterWidth, jitterHeight)
         else -> null
     }
+}
+
+fun Mapping<*>.wrap(geom: Geom): Pair<String, String> {
+    return aes.toLPName(geom) to source.id
+}
+
+fun NonPositionalSetting<*>.wrap(geom: Geom): Pair<String, Any>{
+    return aes.toLPName(geom) to wrapValue(value)
 }
 
 // TODO
@@ -104,6 +124,9 @@ val fillGeoms = setOf(
 )
 // TODO
 fun Aes.toLPName(geom: Geom): String {
+    if (this == SYMBOL) {
+        return "shape"
+    }
     if (this == LINE_TYPE){
         return "linetype"
     }
@@ -157,15 +180,15 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
     return when (this) {
         is CategoricalPositionalScale<*> -> {
             when (aes) {
-                X -> scaleXDiscrete(limits = categories, name = axis.name)
-                Y -> scaleYDiscrete(limits = categories, name = axis.name)
+                X -> scaleXDiscrete(limits = categories,) // TODO name = axis.name)
+                Y -> scaleYDiscrete(limits = categories,) // TODO name = axis.name)
                 else -> TODO()
             }
         }
         is ContinuousPositionalScale<*> -> {
             when (aes) {
-                X -> scaleXContinuous(limits = limits.toLP(), name = axis.name)
-                Y -> scaleYContinuous(limits = limits.toLP(), name = axis.name)
+                X -> scaleXContinuous(limits = limits.toLP(),) // TODO name = axis.name)
+                Y -> scaleYContinuous(limits = limits.toLP(), ) // TODO name = axis.name)
                 else -> TODO()
             }
         }
@@ -238,7 +261,11 @@ fun FacetGridFeature.wrap(): OptionsMap {
 fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
     var plot = layers.fold(letsPlot(dataset) + labs(title = layout.title)) { plot, layer ->
         var buffer = plot + LayerWrapper(layer)
-        layer.scales.forEach { (aes, scale) -> scale.wrap(aes, layer.geom)?.let { buffer += it } }
+        layer.mappings.forEach { (aes, mapping) ->
+            if (mapping is ScalablePositionalMapping<*>) {
+                mapping.scale.wrap(aes, layer.geom)?.let { buffer += it }
+            }
+        }
         buffer
     }
     for ((featureName, feature) in features) {

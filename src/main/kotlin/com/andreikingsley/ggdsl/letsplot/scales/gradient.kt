@@ -1,5 +1,5 @@
 package com.andreikingsley.ggdsl.letsplot.scales
-
+/*
 import com.andreikingsley.ggdsl.dsl.NonPositionalMapping
 import com.andreikingsley.ggdsl.ir.scale.*
 import com.andreikingsley.ggdsl.util.color.*
@@ -20,3 +20,6 @@ inline infix fun <reified DomainType> NonPositionalMapping<DomainType, StandardC
     //scaleColorGradient()
     return ScaleGradient<DomainType>(typeOf<DomainType>()).apply(block)
 }
+
+
+ */

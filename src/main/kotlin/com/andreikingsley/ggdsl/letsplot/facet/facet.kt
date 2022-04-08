@@ -1,6 +1,6 @@
 package com.andreikingsley.ggdsl.letsplot.facet
 
-import com.andreikingsley.ggdsl.dsl.DataSource
+import com.andreikingsley.ggdsl.ir.data.DataSource
 import com.andreikingsley.ggdsl.dsl.PlotContext
 import com.andreikingsley.ggdsl.ir.FeatureName
 import com.andreikingsley.ggdsl.ir.PlotFeature

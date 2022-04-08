@@ -4,8 +4,8 @@ plugins {
     `maven-publish`
 }
 
-val ggdslVersion = "0.2.2-1"
-val ggdslLetsPlotVersion = "0.2.2-7"
+val ggdslVersion = "0.3.1-5"
+val ggdslLetsPlotVersion = "0.3.1-1"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion
@@ -23,7 +23,7 @@ dependencies {
     implementation("com.github.AndreiKingsley:ggdsl:$ggdslVersion")
 
 
-    //implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.3.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.3.0")
 }
 
 tasks {
