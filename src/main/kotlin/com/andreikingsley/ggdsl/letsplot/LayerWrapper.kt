@@ -197,8 +197,10 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                 SIZE -> scaleSizeManual(values = values.map { it as Double }) // TODO
                 // TODO
                 COLOR -> if (values.isEmpty()) {
+                    println("ZALUPA")
                     scaleFillDiscrete()
                 } else {
+                    println("OK")
                     scaleFillManual(values = values.map { (it as StandardColor).description })
                 }
                 // TODO
