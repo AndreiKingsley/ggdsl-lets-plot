@@ -4,8 +4,8 @@ plugins {
     `maven-publish`
 }
 
-val ggdslVersion = "0.3.1-5"
-val ggdslLetsPlotVersion = "0.3.1-3"
+val ggdslVersion = "0.3.1-10"
+val ggdslLetsPlotVersion = "0.3.1-4"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion
