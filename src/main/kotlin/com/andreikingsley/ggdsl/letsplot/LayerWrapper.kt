@@ -3,10 +3,7 @@ package com.andreikingsley.ggdsl.letsplot
 import com.andreikingsley.ggdsl.ir.*
 import com.andreikingsley.ggdsl.ir.Geom
 import com.andreikingsley.ggdsl.ir.aes.*
-import com.andreikingsley.ggdsl.ir.bindings.Mapping
-import com.andreikingsley.ggdsl.ir.bindings.NonPositionalSetting
-import com.andreikingsley.ggdsl.ir.bindings.ScalablePositionalMapping
-import com.andreikingsley.ggdsl.ir.bindings.Setting
+import com.andreikingsley.ggdsl.ir.bindings.*
 import com.andreikingsley.ggdsl.ir.scale.*
 import com.andreikingsley.ggdsl.util.color.*
 import com.andreikingsley.ggdsl.util.symbol.*
@@ -197,10 +194,8 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                 SIZE -> scaleSizeManual(values = values.map { it as Double }) // TODO
                 // TODO
                 COLOR -> if (values.isEmpty()) {
-                    println("ZALUPA")
                     scaleFillDiscrete()
                 } else {
-                    println("OK")
                     scaleFillManual(values = values.map { (it as StandardColor).description })
                 }
                 // TODO
@@ -264,7 +259,7 @@ fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
     var plot = layers.fold(letsPlot(dataset) + labs(title = layout.title)) { plot, layer ->
         var buffer = plot + LayerWrapper(layer)
         layer.mappings.forEach { (aes, mapping) ->
-            if (mapping is ScalablePositionalMapping<*>) {
+            if (mapping is ScalableMapping) {
                 mapping.scale.wrap(aes, layer.geom)?.let { buffer += it }
             }
         }
