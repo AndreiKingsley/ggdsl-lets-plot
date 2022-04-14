@@ -23,7 +23,7 @@ data class ColorBar internal constructor(
 
 class LetsPlotLegend<DomainType: Any, RangeType: Any>: Legend {
     var name: String? = null
-    var breaks = listOf<DomainType>()
+    var breaks: List<DomainType>? = null
     var labels: List<String>? = null // todo pair list and format
     // todo expand & trans
     var legendType: LegendType? = null
