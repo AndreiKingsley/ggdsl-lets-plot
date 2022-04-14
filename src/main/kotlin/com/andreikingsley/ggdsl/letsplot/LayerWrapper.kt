@@ -286,11 +286,18 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                         SIZE -> scaleSize(
                             limits = domainLimits.toLP(),
                             range = range.toLP(),
+                            /*
                             name = name,
-                            breaks = breaks?.map { it as Number },
+                            breaks = breaks?.map {
+                                println(it as Number)
+                                it as Number },
                             labels = labels,
                             guide = legendType
-                        ) // TODO
+
+                             */
+                        ).also {
+                            println(it)
+                        } // TODO
                         COLOR, MAPPABLE_BORDER_COLOR -> {
                             val (lowColor, highColor) = range.let {
                                 (it?.first as? StandardColor)?.description to (it?.second as? StandardColor)?.description
