@@ -10,6 +10,7 @@ import com.andreikingsley.ggdsl.util.symbol.*
 import com.andreikingsley.ggdsl.letsplot.facet.*
 import com.andreikingsley.ggdsl.letsplot.layers.*
 import com.andreikingsley.ggdsl.letsplot.position.*
+import com.andreikingsley.ggdsl.letsplot.scales.guide.*
 import com.andreikingsley.ggdsl.letsplot.util.linetype.LetsPlotLineType
 import com.andreikingsley.ggdsl.letsplot.util.symbol.LetsPlotSymbol
 import com.andreikingsley.ggdsl.util.linetype.CommonLineType
@@ -175,63 +176,171 @@ fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.laye
 fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
     // TODO depends on geom
     return when (this) {
-        is CategoricalPositionalScale<*> -> {
-            when (aes) {
-                X -> scaleXDiscrete(limits = categories,) // TODO name = axis.name)
-                Y -> scaleYDiscrete(limits = categories,) // TODO name = axis.name)
-                else -> TODO()
-            }
-        }
-        is ContinuousPositionalScale<*> -> {
-            when (aes) {
-                X -> scaleXContinuous(limits = limits.toLP(),) // TODO name = axis.name)
-                Y -> scaleYContinuous(limits = limits.toLP(), ) // TODO name = axis.name)
-                else -> TODO()
-            }
-        }
-        is CategoricalNonPositionalScale<*, *> -> {
-            when (aes) {
-                SIZE -> scaleSizeManual(values = values.map { it as Double }) // TODO
-                // TODO
-                COLOR -> if (values.isEmpty()) {
-                    scaleFillDiscrete()
-                } else {
-                    scaleFillManual(values = values.map { (it as StandardColor).description })
+        is PositionalScale<*> -> {
+            val axis = axis as? LetsPlotAxis<*>
+            val name = axis?.name
+            val breaks = axis?.breaks
+            val labels = axis?.labels
+            when(this) {
+                is CategoricalPositionalScale<*> -> {
+                    when (aes) {
+                        X -> scaleXDiscrete(
+                            limits = categories,
+                            name = name,
+                            breaks = breaks,
+                            labels = labels,
+                        )
+                        Y -> scaleYDiscrete(
+                            limits = categories,
+                            name = name,
+                            breaks = breaks,
+                            labels = labels,
+                        )
+                        else -> TODO("error")
+                    }
                 }
-                // TODO
-                ALPHA -> scaleAlphaManual(values = values.map { it as Double }) // TODO
-                SYMBOL -> scaleShapeManual(values = values.map { wrapSymbol(it as Symbol) })
+                is ContinuousPositionalScale<*> -> {
+                    when (aes) {
+                        X -> scaleXContinuous(limits = limits.toLP(),) // TODO name = axis.name)
+                        Y -> scaleYContinuous(limits = limits.toLP(), ) // TODO name = axis.name)
+                        else -> TODO()
+                    }
+                }
+                is DefaultScale -> {
+                    // TODO add default recognition for guides???
+                    return null
+                }
+                else -> TODO()
+            }
+
+
+        }
+
+        is NonPositionalScale<*, *> -> {
+            val legend = legend as? LetsPlotLegend<*, *>
+            val name = legend?.name
+            val breaks = legend?.breaks
+            val labels = legend?.labels
+            val legendType = legend?.legendType?.let {
+                when(it) {
+                    is None -> null
+                    is ColorBar -> guideColorbar(
+                        barHeight = it.barHeight,
+                        barWidth = it.barWidth,
+                        nbin = it.nBin
+                    )
+                    is DiscreteLegend -> guideLegend(
+                        nrow = it.nRow,
+                        ncol = it.nCol,
+                        byRow = it.byRow
+                    )
+                }
+            }
+
+            when(this) {
+                is CategoricalNonPositionalScale<*, *> -> {
+                    when (aes) {
+                        SIZE -> scaleSizeManual(
+                            values = values.map { it as Double },
+                            name = name,
+                            breaks = breaks,
+                            labels = labels,
+                            guide = legendType
+                        )
+                        COLOR -> if (values.isEmpty()) {
+                            scaleFillDiscrete(
+                                name = name,
+                                breaks = breaks,
+                                labels = labels,
+                                guide = legendType
+                            )
+                        } else {
+                            scaleFillManual(
+                                values = values.map { (it as StandardColor).description },
+                                name = name,
+                                breaks = breaks,
+                                labels = labels,
+                                guide = legendType
+                            )
+                        }
+                        // TODO
+                        ALPHA -> scaleAlphaManual(
+                            values = values.map { it as Double },
+                            name = name,
+                            breaks = breaks,
+                            labels = labels,
+                            guide = legendType
+                        ) // TODO
+                        SYMBOL -> scaleShapeManual(
+                            values = values.map { wrapSymbol(it as Symbol) },
+                            name = name,
+                            breaks = breaks,
+                            labels = labels,
+                            guide = legendType
+                        )
+                        else -> TODO()
+                    }
+                }
+                is ContinuousNonPositionalScale<*, *> -> {
+                    when (aes) {
+                        SIZE -> scaleSize(
+                            limits = domainLimits.toLP(),
+                            range = range.toLP(),
+                            name = name,
+                            breaks = breaks?.map { it as Number },
+                            labels = labels,
+                            guide = legendType
+                        ) // TODO
+                        COLOR, MAPPABLE_BORDER_COLOR -> {
+                            val (lowColor, highColor) = range.let {
+                                (it?.first as? StandardColor)?.description to (it?.second as? StandardColor)?.description
+                            }
+                            val limits = domainLimits.toLP() // todo datetime here
+                            if (aes == COLOR && geom in fillGeoms){
+                                scaleFillContinuous(
+                                    low = lowColor,
+                                    high = highColor,
+                                    limits = limits,
+                                    name = name,
+                                    breaks = breaks?.map { it as Number },
+                                    labels = labels,
+                                    guide = legendType
+                                )
+                            } else {
+                                scaleColorContinuous(
+                                    low = lowColor,
+                                    high = highColor,
+                                    limits = limits,
+                                    name = name,
+                                    breaks = breaks?.map { it as Number },
+                                    labels = labels,
+                                    guide = legendType
+                                )
+                            }
+                        }   // TODO
+                        ALPHA -> scaleAlpha(
+                            limits = domainLimits.toLP(),
+                            range = range.toLP(),
+                            name = name,
+                            breaks = breaks?.map { it as Number },
+                            labels = labels,
+                            guide = legendType
+                        ) // TODO
+                        SYMBOL -> TODO("cant apply contunuous scale")
+                        else -> TODO()
+                    }
+                }
+                is DefaultScale -> {
+                    // TODO add default recognition for guides???
+                    return null
+                }
                 else -> TODO()
             }
         }
-        is ContinuousNonPositionalScale<*, *> -> {
-            when (aes) {
-                SIZE -> scaleSize(limits = domainLimits.toLP(), range = range.toLP()) // TODO
-                COLOR, MAPPABLE_BORDER_COLOR -> {
-                    val (lowColor, highColor) = range.let {
-                        (it?.first as? StandardColor)?.description to (it?.second as? StandardColor)?.description
-                    }
-                    val limits = domainLimits.toLP() // todo datetime here
-                    if (aes == COLOR && geom in fillGeoms){
-                        scaleFillContinuous(
-                            low = lowColor,
-                            high = highColor,
-                            limits = limits
-                        )
-                    } else {
-                        scaleColorContinuous(
-                            low = lowColor,
-                            high = highColor,
-                            limits = limits
-                        )
-                    }
-                }   // TODO
-                ALPHA -> scaleAlpha(limits = domainLimits.toLP(), range = range.toLP()) // TODO
-                SYMBOL -> TODO("cant apply contunuous scale")
-                else -> TODO()
-            }
-        }
+
+
         is DefaultScale -> {
+            // TODO add default recognition for guides???
             return null
         }
         else -> TODO()

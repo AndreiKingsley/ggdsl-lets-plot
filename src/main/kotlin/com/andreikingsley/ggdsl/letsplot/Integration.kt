@@ -13,6 +13,7 @@ internal class Integration : JupyterIntegration() {
         // todo add scales
         import("com.andreikingsley.ggdsl.letsplot.position.*")
         import("com.andreikingsley.ggdsl.letsplot.util.linetype.*")
+        import("com.andreikingsley.ggdsl.letsplot.util.symbol.*")
     }
 
 }
