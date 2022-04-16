@@ -11,6 +11,8 @@ internal class Integration : JupyterIntegration() {
         import("com.andreikingsley.ggdsl.letsplot.facet.*")
         import("com.andreikingsley.ggdsl.letsplot.layers.*")
         // todo add scales
+        import("com.andreikingsley.ggdsl.letsplot.scales.*")
+        import("com.andreikingsley.ggdsl.letsplot.scales.guide.*")
         import("com.andreikingsley.ggdsl.letsplot.position.*")
         import("com.andreikingsley.ggdsl.letsplot.util.linetype.*")
         import("com.andreikingsley.ggdsl.letsplot.util.symbol.*")

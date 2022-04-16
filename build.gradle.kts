@@ -5,7 +5,7 @@ plugins {
 }
 
 val ggdslVersion = "0.3.2-2"
-val ggdslLetsPlotVersion = "0.3.2-6"
+val ggdslLetsPlotVersion = "0.3.2-7-dbg"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion
@@ -23,7 +23,7 @@ dependencies {
     implementation("com.github.AndreiKingsley:ggdsl:$ggdslVersion")
 
 
-    //implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.3.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.3.0")
 }
 
 tasks {

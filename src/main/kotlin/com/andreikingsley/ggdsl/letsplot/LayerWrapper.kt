@@ -368,7 +368,8 @@ fun FacetGridFeature.wrap(): OptionsMap {
 }
 
 fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
-    var plot = layers.fold(letsPlot(dataset) + labs(title = layout.title)) { plot, layer ->
+    var plot = letsPlot(dataset) + labs(title = layout.title)
+    plot = layers.fold(plot) { plot, layer ->
         var buffer = plot + LayerWrapper(layer)
         layer.mappings.forEach { (aes, mapping) ->
             if (mapping is ScalableMapping) {
