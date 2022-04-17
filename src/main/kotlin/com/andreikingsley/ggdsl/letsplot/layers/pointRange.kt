@@ -1,6 +1,7 @@
 package com.andreikingsley.ggdsl.letsplot.layers
 
 import com.andreikingsley.ggdsl.dsl.LayerContext
+import com.andreikingsley.ggdsl.dsl.MutableNamedData
 import com.andreikingsley.ggdsl.dsl.PlotContext
 import com.andreikingsley.ggdsl.dsl.toLayer
 import com.andreikingsley.ggdsl.ir.Geom
@@ -12,7 +13,7 @@ import com.andreikingsley.ggdsl.letsplot.Y_MIN
 
 val POINT_RANGE = Geom("pointrange")
 
-class PointRangeContext(): LayerContext(){
+class PointRangeContext(override var data: MutableNamedData) : LayerContext(){
     val yMin = Y_MIN
     val yMax = Y_MAX
 
@@ -33,5 +34,5 @@ class PointRangeContext(): LayerContext(){
 
 // todo camelcase???
 fun PlotContext.pointRange(block: PointRangeContext.() -> Unit) {
-    layers.add(PointRangeContext().apply { copyFrom(this@pointRange) }.apply(block).toLayer(POINT_RANGE))
+    layers.add(PointRangeContext(data).apply { copyFrom(this@pointRange) }.apply(block).toLayer(POINT_RANGE))
 }

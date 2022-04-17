@@ -1,6 +1,7 @@
 package com.andreikingsley.ggdsl.letsplot.layers
 
 import com.andreikingsley.ggdsl.dsl.LayerContext
+import com.andreikingsley.ggdsl.dsl.MutableNamedData
 import com.andreikingsley.ggdsl.dsl.PlotContext
 import com.andreikingsley.ggdsl.dsl.toLayer
 import com.andreikingsley.ggdsl.ir.Geom
@@ -14,7 +15,7 @@ import jetbrains.letsPlot.geom.geomErrorBar
 
 val CROSSBAR = Geom("crossbar")
 
-class CrossBarContext(): LayerContext(){
+class CrossBarContext(override var data: MutableNamedData) : LayerContext(){
     val yMin = Y_MIN
     val yMax = Y_MAX
     val middle = MIDDLE
@@ -33,5 +34,5 @@ class CrossBarContext(): LayerContext(){
 }
 
 fun PlotContext.crossbar(block: CrossBarContext.() -> Unit) {
-    layers.add(CrossBarContext().apply { copyFrom(this@crossbar) }.apply(block).toLayer(CROSSBAR))
+    layers.add(CrossBarContext(data).apply { copyFrom(this@crossbar) }.apply(block).toLayer(CROSSBAR))
 }

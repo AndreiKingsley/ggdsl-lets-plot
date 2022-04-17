@@ -6,7 +6,7 @@ import com.andreikingsley.ggdsl.ir.aes.*
 
 val AREA = Geom("area")
 
-class AreaContext : LayerContext() {
+class AreaContext(override var data: MutableNamedData) : LayerContext() {
     val color = COLOR
     val alpha = ALPHA
 
@@ -15,5 +15,5 @@ class AreaContext : LayerContext() {
 }
 
 fun PlotContext.area(block: AreaContext.() -> Unit) {
-    layers.add(AreaContext().apply { copyFrom(this@area) }.apply(block).toLayer(AREA))
+    layers.add(AreaContext(data).apply { copyFrom(this@area) }.apply(block).toLayer(AREA))
 }

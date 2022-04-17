@@ -24,7 +24,7 @@ import jetbrains.letsPlot.scale.*
 
 class LayerWrapper(private val layer: Layer) :
     jetbrains.letsPlot.intern.layer.LayerBase(
-        data = null,
+        data = layer.data,
         mapping = Options(layer.mappings.map { (_, mapping) -> mapping.wrap(layer.geom) }.toMap()),
         /*map { (aes, value) ->
             wrapBinding(aes, value, layer.geom) }.toMap()
@@ -368,8 +368,9 @@ fun FacetGridFeature.wrap(): OptionsMap {
 }
 
 fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
-    var plot = letsPlot(dataset) + labs(title = layout.title)
-    plot = layers.fold(plot) { plot, layer ->
+    //todo refactor
+    var plotSS = letsPlot(dataset) + labs(title = layout.title)
+    plotSS = layers.fold(plotSS) { plot, layer ->
         var buffer = plot + LayerWrapper(layer)
         layer.mappings.forEach { (aes, mapping) ->
             if (mapping is ScalableMapping) {
@@ -381,11 +382,11 @@ fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
     for ((featureName, feature) in features) {
         when (featureName) {
             FACET_GRID_FEATURE -> {
-                plot += (feature as FacetGridFeature).wrap()
+                plotSS += (feature as FacetGridFeature).wrap()
             }
         }
     }
-    return plot + with(layout.size) {
+    return plotSS + with(layout.size) {
         ggsize(first, second)
     }
 }

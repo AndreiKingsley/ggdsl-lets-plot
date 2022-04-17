@@ -1,16 +1,13 @@
 package com.andreikingsley.ggdsl.letsplot.layers
 
-import com.andreikingsley.ggdsl.dsl.LayerContext
-import com.andreikingsley.ggdsl.dsl.LineContext
-import com.andreikingsley.ggdsl.dsl.PlotContext
-import com.andreikingsley.ggdsl.dsl.toLayer
+import com.andreikingsley.ggdsl.dsl.*
 import com.andreikingsley.ggdsl.ir.Geom
 import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.letsplot.*
 
 val BOXPLOT = Geom("boxplot")
 
-class BoxplotContext : LayerContext() {
+class BoxplotContext(override var data: MutableNamedData) : LayerContext() {
 
     val lower = LOWER
     val upper = UPPER
@@ -26,5 +23,5 @@ class BoxplotContext : LayerContext() {
 }
 
 fun PlotContext.boxplot(block: BoxplotContext.() -> Unit) {
-    layers.add(BoxplotContext().apply { copyFrom(this@boxplot) }.apply(block).toLayer(BOXPLOT))
+    layers.add(BoxplotContext(data).apply { copyFrom(this@boxplot) }.apply(block).toLayer(BOXPLOT))
 }

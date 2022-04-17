@@ -1,6 +1,7 @@
 package com.andreikingsley.ggdsl.letsplot.layers
 
 import com.andreikingsley.ggdsl.dsl.LayerContext
+import com.andreikingsley.ggdsl.dsl.MutableNamedData
 import com.andreikingsley.ggdsl.dsl.PlotContext
 import com.andreikingsley.ggdsl.dsl.toLayer
 import com.andreikingsley.ggdsl.ir.Geom
@@ -10,7 +11,7 @@ import com.andreikingsley.ggdsl.letsplot.Y_MIN
 
 val LINE_RANGE = Geom("linerange")
 
-class LineRangeContext(): LayerContext(){
+class LineRangeContext(override var data: MutableNamedData) : LayerContext(){
     val yMin = Y_MIN
     val yMax = Y_MAX
 
@@ -24,5 +25,5 @@ class LineRangeContext(): LayerContext(){
 
 // todo camelcase???
 fun PlotContext.lineRange(block: LineRangeContext.() -> Unit) {
-    layers.add(LineRangeContext().apply { copyFrom(this@lineRange) }.apply(block).toLayer(LINE_RANGE))
+    layers.add(LineRangeContext(data).apply { copyFrom(this@lineRange) }.apply(block).toLayer(LINE_RANGE))
 }
