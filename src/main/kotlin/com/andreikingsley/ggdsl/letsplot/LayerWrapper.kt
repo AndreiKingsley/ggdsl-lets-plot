@@ -201,8 +201,17 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                 }
                 is ContinuousPositionalScale<*> -> {
                     when (aes) {
-                        X -> scaleXContinuous(limits = limits.toLP(),) // TODO name = axis.name)
-                        Y -> scaleYContinuous(limits = limits.toLP(), ) // TODO name = axis.name)
+                        X -> scaleXContinuous(
+                            limits = limits.toLP(),
+                            name = name,
+                            breaks = breaks?.map {  it as Number}, // TODO() }
+                            labels = labels,
+                        )
+                        Y -> scaleYContinuous(limits = limits.toLP(),
+                            name = name,
+                            breaks = breaks?.map {  it as Number}, // TODO() }
+                            labels = labels,
+                        )
                         else -> TODO()
                     }
                 }
