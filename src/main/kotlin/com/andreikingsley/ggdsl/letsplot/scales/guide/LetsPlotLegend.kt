@@ -1,7 +1,5 @@
 package com.andreikingsley.ggdsl.letsplot.scales.guide
 
-import com.andreikingsley.ggdsl.dsl.NonPositionalScaleContext
-import com.andreikingsley.ggdsl.dsl.PositionalScaleContext
 import com.andreikingsley.ggdsl.ir.scale.guide.Legend
 import com.andreikingsley.ggdsl.util.color.Color
 
@@ -42,9 +40,11 @@ fun LetsPlotLegend<*,Color>.colorBar(
     barHeight: Double? = null,
     nBin: Int? = null
 ) = ColorBar(barWidth, barHeight, nBin)
-
+/*
 inline fun<DomainType : Any, RangeType : Any> NonPositionalScaleContext<DomainType, RangeType>.
         legend(block: LetsPlotLegend<DomainType, RangeType>.() -> Unit) {
     legend = LetsPlotLegend<DomainType, RangeType>().apply(block)
 }
+
+ */
 

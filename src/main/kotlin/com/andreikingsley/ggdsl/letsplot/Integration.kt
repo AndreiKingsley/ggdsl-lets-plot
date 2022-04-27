@@ -8,6 +8,7 @@ internal class Integration : JupyterIntegration() {
 
     override fun Builder.onLoaded() {
         import("com.andreikingsley.ggdsl.letsplot.*")
+        import("com.andreikingsley.ggdsl.letsplot.translator.*")
         import("com.andreikingsley.ggdsl.letsplot.facet.*")
         import("com.andreikingsley.ggdsl.letsplot.layers.*")
         // todo add scales

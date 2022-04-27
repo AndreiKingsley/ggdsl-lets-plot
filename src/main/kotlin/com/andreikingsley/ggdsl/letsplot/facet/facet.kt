@@ -2,8 +2,8 @@ package com.andreikingsley.ggdsl.letsplot.facet
 
 import com.andreikingsley.ggdsl.ir.data.DataSource
 import com.andreikingsley.ggdsl.dsl.PlotContext
-import com.andreikingsley.ggdsl.ir.FeatureName
-import com.andreikingsley.ggdsl.ir.PlotFeature
+import com.andreikingsley.ggdsl.ir.feature.FeatureName
+import com.andreikingsley.ggdsl.ir.feature.PlotFeature
 
 class FacetAes(val name: String)
 
@@ -18,6 +18,7 @@ class OrderDirection private constructor(val value: Int){
 }
 
 class FacetGridFeature : PlotFeature {
+    override val featureName: FeatureName = FACET_GRID_FEATURE
     val mappings: MutableMap<FacetAes, DataSource<Any>> = mutableMapOf()
     val x = FACET_X
     val y = FACET_Y
@@ -30,7 +31,7 @@ class FacetGridFeature : PlotFeature {
 
      */
 
-    inline infix fun <reified DomainType : Any> FacetAes.mapTo(dataSource: DataSource<DomainType>) {
+    inline operator fun <reified DomainType : Any> FacetAes.invoke(dataSource: DataSource<DomainType>) {
         mappings[this] = dataSource
     }
 }
@@ -38,5 +39,5 @@ class FacetGridFeature : PlotFeature {
 val FACET_GRID_FEATURE = FeatureName("FACET_GRID_FEATURE")
 
 fun PlotContext.facetGrid(block: FacetGridFeature.() -> Unit) {
-    features[FACET_GRID_FEATURE] = FacetGridFeature().apply(block)
+     features[FACET_GRID_FEATURE] = FacetGridFeature().apply(block)
 }

@@ -1,8 +1,10 @@
 package com.andreikingsley.ggdsl.letsplot.position
 
-import com.andreikingsley.ggdsl.ir.LayerFeature
+import com.andreikingsley.ggdsl.ir.feature.FeatureName
+import com.andreikingsley.ggdsl.ir.feature.LayerFeature
 
 abstract class  Position internal constructor(val name: String): LayerFeature {
+    override val featureName: FeatureName = POSITION_FEATURE_NAME
     // tODO OBJECTS?
     class Identity: Position("identity")
     class Stack: Position("stack")

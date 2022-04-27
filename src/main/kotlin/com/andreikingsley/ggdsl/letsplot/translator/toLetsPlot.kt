@@ -1,50 +1,28 @@
-package com.andreikingsley.ggdsl.letsplot
+package com.andreikingsley.ggdsl.letsplot.translator
 
 import com.andreikingsley.ggdsl.ir.*
 import com.andreikingsley.ggdsl.ir.Geom
 import com.andreikingsley.ggdsl.ir.aes.*
 import com.andreikingsley.ggdsl.ir.bindings.*
+import com.andreikingsley.ggdsl.ir.feature.*
 import com.andreikingsley.ggdsl.ir.scale.*
+import com.andreikingsley.ggdsl.letsplot.*
 import com.andreikingsley.ggdsl.util.color.*
 import com.andreikingsley.ggdsl.util.symbol.*
-import com.andreikingsley.ggdsl.letsplot.facet.*
 import com.andreikingsley.ggdsl.letsplot.layers.*
 import com.andreikingsley.ggdsl.letsplot.position.*
-import com.andreikingsley.ggdsl.letsplot.scales.guide.*
 import com.andreikingsley.ggdsl.letsplot.util.linetype.LetsPlotLineType
 import com.andreikingsley.ggdsl.letsplot.util.symbol.LetsPlotSymbol
 import com.andreikingsley.ggdsl.util.linetype.CommonLineType
 import jetbrains.letsPlot.*
-import jetbrains.letsPlot.facet.facetGrid
-import jetbrains.letsPlot.intern.Options
-import jetbrains.letsPlot.intern.OptionsMap
+import jetbrains.letsPlot.intern.Feature
+import jetbrains.letsPlot.intern.FeatureList
 import jetbrains.letsPlot.intern.layer.PosOptions
 import jetbrains.letsPlot.label.labs
 import jetbrains.letsPlot.scale.*
 
-class LayerWrapper(private val layer: Layer) :
-    jetbrains.letsPlot.intern.layer.LayerBase(
-        data = layer.data,
-        mapping = Options(layer.mappings.map { (_, mapping) -> mapping.wrap(layer.geom) }.toMap()),
-        /*map { (aes, value) ->
-            wrapBinding(aes, value, layer.geom) }.toMap()
-        )
-        ,
-         */
-        geom = layer.geom.toLPGeom(!(layer.settings.containsKey(SYMBOL) || layer.mappings.containsKey(SYMBOL))),
-        stat = Stat.identity,
-        position = layer.features[POSITION_FEATURE_NAME]?.toPos() ?: Pos.identity, // TODO
-        showLegend = true,
-    ) {
-    // TODO
-    override fun seal() = Options(
-        layer.settings.map {
-                (_, setting) -> (setting as NonPositionalSetting<*>).wrap(layer.geom)
-        }.toMap()
-    )
-}
 
-private fun LayerFeature?.toPos(): PosOptions? {
+internal fun LayerFeature?.wrap(): PosOptions? {
     return when(this) {
         is Position.Identity -> return Pos.identity
         is Position.Stack -> return Pos.stack
@@ -56,16 +34,20 @@ private fun LayerFeature?.toPos(): PosOptions? {
     }
 }
 
-fun Mapping<*>.wrap(geom: Geom): Pair<String, String> {
-    return aes.toLPName(geom) to source.id
+internal fun Mapping.wrap(geom: Geom): Pair<String, String> {
+   return when(this) {
+        is NonScalablePositionalMapping<*> -> aes.toLPName(geom) to source.id
+        is ScaledMapping<*> -> aes.toLPName(geom) to sourceScaled.source.id
+    }
+   // return aes.toLPName(geom) to source.id
 }
 
-fun NonPositionalSetting<*>.wrap(geom: Geom): Pair<String, Any>{
+internal fun NonPositionalSetting<*>.wrap(geom: Geom): Pair<String, Any>{
     return aes.toLPName(geom) to wrapValue(value)
 }
 
 // TODO
-fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
+internal fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
     if (aes == SYMBOL) {
         val ret = "shape" to wrapValue(value) // TODO scaling
        // TODO
@@ -75,7 +57,7 @@ fun wrapBinding(aes: Aes, value: Any, geom: Geom): Pair<String, Any> {
 }
 
 // TODO
-fun wrapValue(value: Any): Any{
+internal fun wrapValue(value: Any): Any{
     if (value is StandardColor) {
         return value.description
     }
@@ -94,7 +76,7 @@ fun wrapValue(value: Any): Any{
     return value
 }
 
-fun commonSymbolToShape(symbol: CommonSymbol): Int {
+internal fun commonSymbolToShape(symbol: CommonSymbol): Int {
     return when(symbol){
         Symbol.RECTANGLE -> 22
         Symbol.CIRCLE -> 21
@@ -103,7 +85,7 @@ fun commonSymbolToShape(symbol: CommonSymbol): Int {
     }
 }
 
-fun wrapSymbol(symbol: Symbol): Int {
+internal fun wrapSymbol(symbol: Symbol): Int {
     return when(symbol){
         is LetsPlotSymbol -> symbol.shape
         is CommonSymbol -> commonSymbolToShape(symbol)
@@ -121,7 +103,7 @@ val fillGeoms = setOf(
     POINT_RANGE,
 )
 // TODO
-fun Aes.toLPName(geom: Geom): String {
+internal fun Aes.toLPName(geom: Geom): String {
     if (this == SYMBOL) {
         return "shape"
     }
@@ -151,7 +133,7 @@ fun Aes.toLPName(geom: Geom): String {
 }
 
 // TODO rewrite
-fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.layer.GeomOptions {
+internal fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.layer.GeomOptions {
     return when (this!!) {
         Geom.POINT -> {
             if (defaultShape) {
@@ -173,59 +155,62 @@ fun Geom?.toLPGeom(defaultShape: Boolean = true): jetbrains.letsPlot.intern.laye
 }
 
 
-fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
+internal fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
     // TODO depends on geom
     return when (this) {
         is PositionalScale<*> -> {
-            val axis = axis as? LetsPlotAxis<*>
+            // TODO
+            /*
             val name = axis?.name
             val breaks = axis?.breaks
             val labels = axis?.labels
+             */
             when(this) {
-                is CategoricalPositionalScale<*> -> {
+                is PositionalCategoricalScale<*> -> {
                     when (aes) {
                         X -> scaleXDiscrete(
                             limits = categories,
-                            name = name,
-                            breaks = breaks,
-                            labels = labels,
+               //             name = name,
+               //             breaks = breaks,
+                //            labels = labels,
                         )
                         Y -> scaleYDiscrete(
                             limits = categories,
+                            /*
                             name = name,
                             breaks = breaks,
                             labels = labels,
+                             */
                         )
                         else -> TODO("error")
                     }
                 }
-                is ContinuousPositionalScale<*> -> {
+                is PositionalContinuousScale<*> -> {
                     when (aes) {
                         X -> scaleXContinuous(
                             limits = limits.toLP(),
+                            /*
                             name = name,
                             breaks = breaks?.map {  it as Number}, // TODO() }
                             labels = labels,
+                             */
                         )
-                        Y -> scaleYContinuous(limits = limits.toLP(),
+                        Y -> scaleYContinuous(
+                            limits = limits.toLP(),
+                            /*
                             name = name,
                             breaks = breaks?.map {  it as Number}, // TODO() }
                             labels = labels,
+                             */
                         )
                         else -> TODO()
                     }
                 }
-                is DefaultScale -> {
-                    // TODO add default recognition for guides???
-                    return null
-                }
-                else -> TODO()
             }
-
-
         }
 
         is NonPositionalScale<*, *> -> {
+            /*
             val legend = legend as? LetsPlotLegend<*, *>
             val name = legend?.name
             val breaks = legend?.breaks
@@ -246,65 +231,89 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                 }
             }
 
+             */
+
             when(this) {
-                is CategoricalNonPositionalScale<*, *> -> {
+                is NonPositionalCategoricalScale<*, *> -> {
                     when (aes) {
                         SIZE -> scaleSizeManual(
-                            values = values.map { it as Double },
+                            values = rangeValues?.map { it as Number } ?:
+                            TODO("default scale size discrete"),
+                            /*
                             name = name,
                             breaks = breaks,
                             labels = labels,
                             guide = legendType
+                             */
                         )
-                        COLOR -> if (values.isEmpty()) {
+                        // todo lp aes
+                        COLOR -> if (rangeValues?.isEmpty() == true) {
                             scaleFillDiscrete(
+                                /*
                                 name = name,
                                 breaks = breaks,
                                 labels = labels,
                                 guide = legendType
+
+                                 */
                             )
                         } else {
                             scaleFillManual(
-                                values = values.map { (it as StandardColor).description },
-                                name = name,
+                                values = rangeValues!!.map { (it as StandardColor).description },
+                            /*    name = name,
                                 breaks = breaks,
                                 labels = labels,
                                 guide = legendType
+
+                             */
                             )
                         }
                         // TODO
                         ALPHA -> scaleAlphaManual(
-                            values = values.map { it as Double },
+                            values = rangeValues?.map { it as Double } ?:
+                            TODO("default scale size discrete"),
+                            /*
                             name = name,
                             breaks = breaks,
                             labels = labels,
                             guide = legendType
+
+                             */
                         ) // TODO
                         SYMBOL -> scaleShapeManual(
-                            values = values.map { wrapSymbol(it as Symbol) },
+                            values = rangeValues?.map { wrapSymbol(it as Symbol) } ?:
+                            TODO("default scale size discrete"),
+                            /*
                             name = name,
                             breaks = breaks,
                             labels = labels,
                             guide = legendType
+
+                             */
                         )
                         else -> TODO()
                     }
                 }
-                is ContinuousNonPositionalScale<*, *> -> {
+                is NonPositionalContinuousScale<*, *> -> {
                     when (aes) {
                         SIZE -> scaleSize(
                             limits = domainLimits.toLP(),
-                            range = range.toLP(),
+                            range = rangeLimits.toLP(),
 
+/*
                             name = name,
                             breaks = breaks?.map {
                                 it as Number },
                             labels = labels,
                             guide = legendType
+
+ */
                         )
 
+
+
                         COLOR, MAPPABLE_BORDER_COLOR -> {
-                            val (lowColor, highColor) = range.let {
+                            val (lowColor, highColor) = rangeLimits.let {
                                 (it?.first as? StandardColor)?.description to (it?.second as? StandardColor)?.description
                             }
                             val limits = domainLimits.toLP() // todo datetime here
@@ -313,30 +322,39 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
                                     low = lowColor,
                                     high = highColor,
                                     limits = limits,
+                                    /*
                                     name = name,
                                     breaks = breaks?.map { it as Number },
                                     labels = labels,
                                     guide = legendType
+
+                                     */
                                 )
                             } else {
                                 scaleColorContinuous(
                                     low = lowColor,
                                     high = highColor,
                                     limits = limits,
+                                    /*
                                     name = name,
                                     breaks = breaks?.map { it as Number },
                                     labels = labels,
                                     guide = legendType
+
+                                     */
                                 )
                             }
                         }   // TODO
                         ALPHA -> scaleAlpha(
                             limits = domainLimits.toLP(),
-                            range = range.toLP(),
+                            range = rangeLimits.toLP(),
+                            /*
                             name = name,
                             breaks = breaks?.map { it as Number },
                             labels = labels,
                             guide = legendType
+
+                             */
                         ) // TODO
                         SYMBOL -> TODO("cant apply contunuous scale")
                         else -> TODO()
@@ -350,7 +368,6 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
             }
         }
 
-
         is DefaultScale -> {
             // TODO add default recognition for guides???
             return null
@@ -361,29 +378,43 @@ fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? {
 }
 
 // TODO
-fun Pair<Any, Any>?.toLP() = this?.let { (it.first as Number) to (it.second as Number) }
+internal fun Pair<Any, Any>?.toLP() = this?.let { (it.first as Number) to (it.second as Number) }
 
-fun FacetGridFeature.wrap(): OptionsMap {
-    return facetGrid(
-        x = mappings[FACET_X]?.id,
-        y = mappings[FACET_Y]?.id,
-        xOrder = xOrder.value,
-        yOrder = yOrder.value,
-        /* TODO
-        xFormat = xFormat,
-        yFormat = yFormat
-         */
-    )
+internal fun Layer.wrap(featureBuffer: MutableList<Feature>) {
+    featureBuffer.add(LayerWrapper(this))
+    mappings.forEach { (aes, mapping) ->
+        if (mapping is ScaledMapping<*>) {
+            mapping.sourceScaled.scale.wrap(aes, geom)?.let {
+                featureBuffer.add(it)
+            }
+        }
+    }
+    //return featureBuffer
 }
 
-fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
-    //todo refactor
-    var plotSS = letsPlot(dataset) + labs(title = layout.title)
-    plotSS = layers.fold(plotSS) { plot, layer ->
-        var buffer = plot + LayerWrapper(layer)
+internal fun Layout.wrap(featureBuffer: MutableList<Feature>) {
+    size?.let {
+        featureBuffer.add(ggsize(it.first, it.second))
+    }
+    title?.let {
+        featureBuffer.add(labs(title))
+    }
+}
+
+fun Plot.toLestPlot(): jetbrains.letsPlot.intern.Plot {
+    val featureBuffer = buildList {
+        layers.forEach { it.wrap(this) }
+        features.forEach { it.value.wrap(this) }
+        layout.wrap(this)
+    }
+    return letsPlot(dataset) + FeatureList(featureBuffer)
+  //  var plotBuffer = letsPlot(dataset)
+    /*
+    var plotBuffer = layers.fold(letsPlot(dataset)) { _buffer, layer ->
+        var buffer = _buffer + LayerWrapper(layer)
         layer.mappings.forEach { (aes, mapping) ->
-            if (mapping is ScalableMapping) {
-                mapping.scale.wrap(aes, layer.geom)?.let { buffer += it }
+            if (mapping is ScaledMapping<*>) {
+                mapping.sourceScaled.scale.wrap(aes, layer.geom)?.let { buffer += it }
             }
         }
         buffer
@@ -391,11 +422,14 @@ fun Plot.toPlot(): jetbrains.letsPlot.intern.Plot {
     for ((featureName, feature) in features) {
         when (featureName) {
             FACET_GRID_FEATURE -> {
-                plotSS += (feature as FacetGridFeature).wrap()
+                plotBuffer += (feature as FacetGridFeature).wrap()
             }
         }
     }
-    return plotSS + with(layout.size) {
-        ggsize(first, second)
-    }
+    return plotBuffer +
+            labs(title = layout.title) +
+            with(layout.size) { ggsize(first, second) } // todo layout
+
+     */
 }
+

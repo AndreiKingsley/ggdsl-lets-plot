@@ -1,6 +1,5 @@
 package com.andreikingsley.ggdsl.letsplot.scales.guide
 
-import com.andreikingsley.ggdsl.dsl.PositionalScaleContext
 import com.andreikingsley.ggdsl.ir.scale.guide.Axis
 
 class LetsPlotAxis<DomainType: Any>: Axis {
@@ -11,7 +10,9 @@ class LetsPlotAxis<DomainType: Any>: Axis {
     // breaks(.... format = ) / labeledBreaks(0.0 to "0", 0.4 to ".4" ...)
     // todo expand & trans
 }
-
+/* TODO
 fun<DomainType : Any> PositionalScaleContext<DomainType>.axis(block: LetsPlotAxis<DomainType>.() -> Unit) {
     axis = LetsPlotAxis<DomainType>().apply(block)
 }
+
+ */
