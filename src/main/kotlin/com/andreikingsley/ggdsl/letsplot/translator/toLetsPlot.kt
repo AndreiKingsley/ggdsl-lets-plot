@@ -248,26 +248,37 @@ internal fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? 
                              */
                         )
                         // todo lp aes
-                        COLOR -> if (rangeValues?.isEmpty() == true) {
-                            scaleFillDiscrete(
-                                /*
-                                name = name,
-                                breaks = breaks,
-                                labels = labels,
-                                guide = legendType
+                        COLOR -> {
+                            println(geom.name)
+                            println(aes.name)
+                            if (geom !in fillGeoms) {
+                                println(rangeValues!!.map { (it as StandardColor).description })
+                                return scaleColorManual(
+                                    values = rangeValues!!.map { (it as StandardColor).description },
+                                )
+                            }
+                            return if (rangeValues?.isEmpty() == true) {
+                                scaleFillDiscrete(
+                                    /*
+                                    name = name,
+                                    breaks = breaks,
+                                    labels = labels,
+                                    guide = legendType
 
-                                 */
-                            )
-                        } else {
-                            scaleFillManual(
-                                values = rangeValues!!.map { (it as StandardColor).description },
-                            /*    name = name,
-                                breaks = breaks,
-                                labels = labels,
-                                guide = legendType
+                                     */
+                                )
+                            } else {
+                                println(rangeValues!!.map { (it as StandardColor).description })
+                                scaleFillManual(
+                                    values = rangeValues!!.map { (it as StandardColor).description },
+                                    /*    name = name,
+                                        breaks = breaks,
+                                        labels = labels,
+                                        guide = legendType
 
-                             */
-                            )
+                                     */
+                                )
+                            }
                         }
                         // TODO
                         ALPHA -> scaleAlphaManual(
