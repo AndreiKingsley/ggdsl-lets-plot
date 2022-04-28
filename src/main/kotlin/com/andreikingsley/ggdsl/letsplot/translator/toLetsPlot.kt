@@ -249,10 +249,7 @@ internal fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? 
                         )
                         // todo lp aes
                         COLOR -> {
-                            println(geom.name)
-                            println(aes.name)
                             if (geom !in fillGeoms) {
-                                println(rangeValues!!.map { (it as StandardColor).description })
                                 return scaleColorManual(
                                     values = rangeValues!!.map { (it as StandardColor).description },
                                 )
@@ -268,7 +265,6 @@ internal fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? 
                                      */
                                 )
                             } else {
-                                println(rangeValues!!.map { (it as StandardColor).description })
                                 scaleFillManual(
                                     values = rangeValues!!.map { (it as StandardColor).description },
                                     /*    name = name,
