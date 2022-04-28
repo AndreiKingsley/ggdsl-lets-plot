@@ -292,6 +292,10 @@ internal fun Scale.wrap(aes: Aes, geom: Geom): jetbrains.letsPlot.intern.Scale? 
 
                              */
                         )
+                        MAPPABLE_BORDER_COLOR -> scaleColorManual(
+                            values = rangeValues?.map { wrapValue(it as Color) } ?:
+                            TODO("default scale size discrete"),
+                        )
                         else -> TODO()
                     }
                 }
