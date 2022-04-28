@@ -18,6 +18,7 @@ import jetbrains.letsPlot.*
 import jetbrains.letsPlot.intern.Feature
 import jetbrains.letsPlot.intern.FeatureList
 import jetbrains.letsPlot.intern.layer.PosOptions
+import jetbrains.letsPlot.label.ggtitle
 import jetbrains.letsPlot.label.labs
 import jetbrains.letsPlot.scale.*
 
@@ -397,7 +398,7 @@ internal fun Layout.wrap(featureBuffer: MutableList<Feature>) {
         featureBuffer.add(ggsize(it.first, it.second))
     }
     title?.let {
-        featureBuffer.add(labs(title))
+        featureBuffer.add(ggtitle(it))
     }
 }
 
