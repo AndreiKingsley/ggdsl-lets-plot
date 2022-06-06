@@ -17,19 +17,26 @@ class OrderDirection private constructor(val value: Int){
     }
 }
 
-class FacetGridFeature : PlotFeature {
-    override val featureName: FeatureName = FACET_GRID_FEATURE
-    val mappings: MutableMap<FacetAes, DataSource<Any>> = mutableMapOf()
-    val x = FACET_X
-    val y = FACET_Y
-
-    var xOrder: OrderDirection = OrderDirection.ASCENDING
+data class FacetGridFeature(
+    val mappings: MutableMap<FacetAes, DataSource<Any>> = mutableMapOf(),
+    var xOrder: OrderDirection = OrderDirection.ASCENDING,
     var yOrder: OrderDirection = OrderDirection.ASCENDING
+) : PlotFeature {
+    override val featureName: FeatureName = FACET_GRID_FEATURE
     /* TODO
     val xFormat: String? = null
     val yFormat: String? = null
 
      */
+
+}
+
+class FacetGridContext {
+    val mappings: MutableMap<FacetAes, DataSource<Any>> = mutableMapOf()
+    val x = FACET_X
+    val y = FACET_Y
+    var xOrder: OrderDirection = OrderDirection.ASCENDING
+    var yOrder: OrderDirection = OrderDirection.ASCENDING
 
     inline operator fun <reified DomainType : Any> FacetAes.invoke(dataSource: DataSource<DomainType>) {
         mappings[this] = dataSource
@@ -38,6 +45,12 @@ class FacetGridFeature : PlotFeature {
 
 val FACET_GRID_FEATURE = FeatureName("FACET_GRID_FEATURE")
 
-fun PlotContext.facetGrid(block: FacetGridFeature.() -> Unit) {
-     features[FACET_GRID_FEATURE] = FacetGridFeature().apply(block)
+fun PlotContext.facetGrid(block: FacetGridContext.() -> Unit) {
+    features[FACET_GRID_FEATURE] = with(FacetGridContext().apply(block)){
+        FacetGridFeature(
+            mappings,
+            xOrder,
+            yOrder
+        )
+    }
 }

@@ -1,11 +1,11 @@
 plugins {
     kotlin("jvm") version "1.6.0"
-    id("org.jetbrains.kotlin.jupyter.api") version "0.11.0-1"
+    id("org.jetbrains.kotlin.jupyter.api") version "0.11.0-89-1"
     `maven-publish`
 }
 
-val ggdslVersion = "0.6.4"
-val ggdslLetsPlotVersion = "0.6.4-1"
+val ggdslVersion = "0.6.5"
+val ggdslLetsPlotVersion = "0.6.5"
 
 group = "com.andreikingsley"
 version = ggdslLetsPlotVersion
@@ -22,8 +22,8 @@ dependencies {
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.2.0")
     implementation("com.github.AndreiKingsley:ggdsl:$ggdslVersion")
 
-
     implementation("org.jetbrains.lets-plot:lets-plot-image-export:2.3.0")
+    testImplementation(kotlin("test"))
 }
 
 tasks {
