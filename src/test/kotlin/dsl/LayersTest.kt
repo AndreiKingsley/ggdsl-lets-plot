@@ -55,7 +55,7 @@ internal class LayersTest {
                                     )
                                 ),
                                 typeOf<String>(),
-                                typeOf<Color>()
+                              //  typeOf<Color>()
                             )
                         ),
                         mapOf(

@@ -112,11 +112,11 @@ internal class LayerWrapperTest {
                     SourceScaledNonPositional(
                         source<String>("BAFGA"),
                         NonPositionalCategoricalScale(
-                            listOf(Color.BLACK, Color.WHITE, Color.GREY)
+                            rangeValues = listOf(Color.BLACK, Color.WHITE, Color.GREY)
                         ),
                     ),
                     typeOf<String>(),
-                    typeOf<Color>()
+                    //typeOf<Color>()
                 )
             ),
             mapOf(

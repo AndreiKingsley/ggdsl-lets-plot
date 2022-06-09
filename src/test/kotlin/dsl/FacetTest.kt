@@ -23,7 +23,7 @@ class FacetTest {
                 listOf(),
                 Layout(),
                 mapOf(
-                    FACET_GRID_FEATURE to FacetGridFeature().apply {
+                    FacetGridFeature.FEATURE_NAME to FacetGridFeature().apply {
                         mappings[FACET_X] = DataSource<String>("xSrc", typeOf<String>())
                     }
                 )
@@ -48,7 +48,7 @@ class FacetTest {
                 listOf(),
                 Layout(),
                 mapOf(
-                    FACET_GRID_FEATURE to FacetGridFeature().apply {
+                    FacetGridFeature.FEATURE_NAME to FacetGridFeature().apply {
                         mappings[FACET_X] = DataSource<String>("xArg", typeOf<String>())
                         mappings[FACET_Y] = DataSource<Int>("yArg", typeOf<Int>())
                         xOrder = OrderDirection.ASCENDING

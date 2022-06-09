@@ -1,7 +1,6 @@
 package com.andreikingsley.ggdsl.letsplot.translator
 
 import com.andreikingsley.ggdsl.ir.feature.PlotFeature
-import com.andreikingsley.ggdsl.letsplot.facet.FACET_GRID_FEATURE
 import com.andreikingsley.ggdsl.letsplot.facet.FACET_X
 import com.andreikingsley.ggdsl.letsplot.facet.FACET_Y
 import com.andreikingsley.ggdsl.letsplot.facet.FacetGridFeature
@@ -26,7 +25,7 @@ internal fun PlotFeature.wrap(featureBuffer: MutableList<Feature>) {
     // todo featureName
     //TODO check is le feature
     when (featureName) {
-        FACET_GRID_FEATURE -> {
+        FacetGridFeature.FEATURE_NAME -> {
             featureBuffer.add((this as FacetGridFeature).wrap())
         }
         else -> TODO()
